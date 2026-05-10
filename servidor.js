@@ -57,7 +57,7 @@ http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': type });
     fs.createReadStream(file).pipe(res);
   });
-}).listen(8084, () => {
-  console.log('=== Ton Captacao v2 rodando em http://localhost:8084 ===');
+}).listen(8085, () => {
+  console.log('=== Ton Captacao v2 rodando em http://localhost:8085 ===');
   console.log('CWD:', CWD);
 });
