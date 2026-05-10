@@ -660,10 +660,6 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
       else if (pendentes[c.doc])btnWpp = `<button class="btn-confirmar" onclick='marcarEnviado(${cJson})'>✅ Confirmar envio</button>`;
       else                      btnWpp = `<button class="btn-wpp" onclick='abrirWhatsApp(${cJson})' ${!c.tel?'disabled':''}>💬 WhatsApp</button>`;
 
-      const btnCred = (!c.jaStone)
-        ? `<button class="btn-credenciar" onclick='credenciarStone(${cJson})'>🟢 Credenciar Stone</button>`
-        : '';
-
       return `<tr id="row-${c.doc}" class="${c.jaStone?'ja-stone':''}">
         <td><span class="nome-link" onclick='abrirModalCliente(${cJson})'>${c.nome}</span></td>
         <td>${telFmt}</td>
@@ -672,7 +668,7 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
         <td class="td-tpv ${tpvCls}">${tpvFmt}</td>
         <td>${badge}</td>
         <td>${enviadoFmt}</td>
-        <td><div class="acoes">${btnWpp}${btnCred}</div></td>
+        <td><div class="acoes">${btnWpp}</div></td>
       </tr>`;
     }).join('');
   }
