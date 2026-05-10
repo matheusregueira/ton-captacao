@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Captação Ton → Stone</title>
+  <script src="xlsx.min.js"></script>
+  <style>
+    :root { --green:#00A868; --green-dark:#007A4C; --ton:#FF6B00; --ton-light:#FFF3EC; --text:#111827; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',system-ui,sans-serif; background:#f8fafc; color:var(--text); }
+
+    header { background:var(--green); color:white; padding:20px 40px; }
+    header h1 { font-size:1.3rem; font-weight:700; }
+    header p  { font-size:.85rem; opacity:.8; }
+
+    .container { max-width:1300px; margin:0 auto; padding:32px 24px; }
+
+    .steps { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:24px; }
+    .step { background:white; border-radius:12px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,.06); border:2px solid #e5e7eb; transition:border-color .2s; }
+    .step.done        { border-color:var(--green); }
+    .step.done-ton    { border-color:var(--ton); }
+    .step.active      { border-color:#3b82f6; }
+    .step-num { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#9ca3af; margin-bottom:6px; }
+    .step h3  { font-size:1rem; font-weight:700; margin-bottom:4px; }
+    .step p   { font-size:.82rem; color:#6b7280; margin-bottom:12px; }
+    .upload-btn { display:inline-flex; align-items:center; gap:8px; background:#f1f5f9; border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 16px; cursor:pointer; font-size:.85rem; font-weight:600; transition:all .2s; color:var(--text); }
+    .upload-btn:hover { border-color:var(--green); background:#f0fdf7; }
+    .upload-btn.ok-stone { background:#f0fdf7; border-color:var(--green); color:var(--green); }
+    .upload-btn.ok-ton   { background:var(--ton-light); border-color:var(--ton); color:var(--ton); }
+    .step input[type=file] { display:none; }
+    .step-status { font-size:.78rem; margin-top:8px; display:none; font-weight:600; }
+    .step-status.show { display:block; }
+
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; margin:0 0 24px; }
+    .stat-card { background:white; border-radius:12px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+    .stat-card .val { font-size:1.8rem; font-weight:800; }
+    .stat-card .val.green { color:var(--green); }
+    .stat-card .val.ton   { color:var(--ton); }
+    .stat-card .val.gray  { color:#94a3b8; }
+    .stat-card .lbl { font-size:.75rem; color:#6b7280; text-transform:uppercase; letter-spacing:.08em; margin-top:4px; }
+
+    .msg-box { background:white; border-radius:12px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,.06); margin-bottom:24px; }
+    .msg-box label { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#6b7280; display:block; margin-bottom:8px; }
+    .msg-box textarea { width:100%; border:1.5px solid #e5e7eb; border-radius:8px; padding:12px; font-family:inherit; font-size:.9rem; resize:vertical; min-height:100px; outline:none; transition:border-color .2s; }
+    .msg-box textarea:focus { border-color:var(--green); }
+    .msg-box small { font-size:.73rem; color:#9ca3af; margin-top:6px; display:block; }
+
+    .toolbar { display:flex; gap:12px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+    .toolbar input[type=text] { border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 14px; font-size:.9rem; outline:none; flex:1; min-width:180px; transition:border-color .2s; }
+    .toolbar input[type=text]:focus { border-color:var(--green); }
+    .toolbar select { border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 12px; font-size:.88rem; outline:none; background:white; cursor:pointer; }
+    .tpv-filter { display:flex; align-items:center; gap:8px; font-size:.85rem; color:#6b7280; white-space:nowrap; }
+    .tpv-filter input[type=number] { border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 12px; font-size:.88rem; outline:none; width:120px; }
+    .badge-count { background:var(--green); color:white; border-radius:100px; padding:4px 14px; font-size:.8rem; font-weight:700; white-space:nowrap; }
+
+    .table-wrap { background:white; border-radius:12px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+    table { width:100%; border-collapse:collapse; font-size:.87rem; }
+    thead th { background:#f8fafc; padding:12px 16px; text-align:left; font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:#6b7280; font-weight:700; border-bottom:1px solid #e5e7eb; cursor:pointer; user-select:none; white-space:nowrap; }
+    thead th:hover { color:var(--green); }
+    tbody tr { border-bottom:1px solid #f1f5f9; transition:background .15s; }
+    tbody tr:hover { background:#f8fafc; }
+    tbody tr.ja-stone { background:#f0fdf7; opacity:.75; }
+    tbody td { padding:11px 16px; vertical-align:middle; }
+
+    .badge-stone { background:#dcfce7; color:#166534; padding:3px 10px; border-radius:100px; font-size:.7rem; font-weight:700; }
+    .badge-alvo  { background:#fff7ed; color:var(--ton); padding:3px 10px; border-radius:100px; font-size:.7rem; font-weight:700; border:1px solid #fed7aa; }
+
+    .td-tpv { font-weight:700; }
+    .tpv-high { color:var(--green-dark); }
+    .tpv-mid  { color:#92400e; }
+    .tpv-low  { color:#94a3b8; }
+
+    .tel-ok { color:#374151; }
+    .tel-no { color:#f87171; font-style:italic; font-size:.8rem; }
+
+    .btn-wpp { background:#25d366; color:white; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-size:.82rem; font-weight:600; display:flex; align-items:center; gap:6px; white-space:nowrap; transition:background .2s; }
+    .btn-wpp:hover { background:#1ebe5a; }
+    .btn-wpp:disabled { background:#e2e8f0; color:#94a3b8; cursor:not-allowed; }
+    .btn-confirmar { background:#f59e0b; color:white; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-size:.82rem; font-weight:600; display:flex; align-items:center; gap:6px; white-space:nowrap; transition:background .2s; }
+    .btn-confirmar:hover { background:#d97706; }
+    .empty { text-align:center; padding:48px; color:#9ca3af; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Captação Ton → Stone</h1>
+  <p>Stone Barbacena · Clientes Ton com potencial de migração</p>
+</header>
+
+<div class="container">
+
+  <div class="steps" id="steps">
+
+    <!-- Passo 1: Stone -->
+    <div class="step active" id="step1">
+      <div class="step-num">Passo 1</div>
+      <h3>🟢 Carteira Stone</h3>
+      <p>Exportação da base Stone — usada só pra identificar quem já é cliente</p>
+      <label class="upload-btn" id="btn1">
+        📂 Carregar carteira Stone
+        <input type="file" id="file-stone" accept=".xlsx,.xls,.csv" onchange="carregarStone(this)">
+      </label>
+      <div class="step-status" id="status1" style="color:var(--green)"></div>
+    </div>
+
+    <!-- Passo 2: Base Ton -->
+    <div class="step" id="step2">
+      <div class="step-num">Passo 2</div>
+      <h3>🟠 Base Ton</h3>
+      <p>Arquivo <strong>Base Ton.xlsx</strong> com documentos e TPV por mês</p>
+      <label class="upload-btn" id="btn2">
+        📂 Carregar Base Ton.xlsx
+        <input type="file" id="file-ton" accept=".xlsx,.xls,.csv" onchange="carregarTon(this)">
+      </label>
+      <div class="step-status" id="status2" style="color:var(--ton)"></div>
+    </div>
+
+    <!-- Passo 3: CSVs das cidades -->
+    <div class="step" id="step3">
+      <div class="step-num">Passo 3</div>
+      <h3>📋 Cadastros das cidades</h3>
+      <p>Selecione todos os CSVs de uma vez (Barbacena, Barroso, Carandaí, Dores...)</p>
+      <label class="upload-btn" id="btn3">
+        📂 Carregar todos os CSVs
+        <input type="file" id="file-csv" accept=".csv,.xlsx,.xls" multiple onchange="carregarCSVs(this)">
+      </label>
+      <div class="step-status" id="status3" style="color:var(--green)"></div>
+    </div>
+
+  </div>
+
+  <!-- Stats -->
+  <div class="stats" id="stats" style="display:none">
+    <div class="stat-card"><div class="val ton"   id="stat-ton">0</div><div class="lbl">Clientes Ton</div></div>
+    <div class="stat-card"><div class="val green"  id="stat-novos">0</div><div class="lbl">Alvos (não são Stone)</div></div>
+    <div class="stat-card"><div class="val gray"   id="stat-jastone">0</div><div class="lbl">Já são Stone</div></div>
+    <div class="stat-card"><div class="val ton"    id="stat-semtel">0</div><div class="lbl">Sem telefone</div></div>
+    <div class="stat-card"><div class="val green"  id="stat-tpv">R$ 0</div><div class="lbl">TPV médio (alvos)</div></div>
+  </div>
+
+  <!-- Mensagem -->
+  <div class="msg-box" id="msg-box" style="display:none">
+    <label>Mensagem — use {nome} para o nome do cliente</label>
+    <textarea id="msg-template">Oi, {nome}! Aqui é da Stone Barbacena. Vi que você usa a Ton — a Stone tem condições melhores pra antecipar seus recebíveis com taxas mais competitivas. Posso te contar mais em 2 minutinhos? 💚</textarea>
+    <small>O botão abre o WhatsApp já com a mensagem. Clique em enviar lá, depois volte e confirme aqui.</small>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar" id="toolbar" style="display:none">
+    <input type="text" id="busca" placeholder="Buscar por nome ou documento..." oninput="filtrar()">
+    <div class="tpv-filter">
+      TPV médio mín: R$
+      <input type="number" id="tpv-min" value="7000" min="0" step="500" oninput="filtrar()">
+    </div>
+    <select id="filtro-stone" onchange="filtrar()">
+      <option value="novos">Apenas alvos (não Stone)</option>
+      <option value="todos">Todos</option>
+      <option value="jastone">Já são Stone</option>
+    </select>
+    <select id="filtro-tel" onchange="filtrar()">
+      <option value="todos">Todos os telefones</option>
+      <option value="comtel">Com telefone</option>
+      <option value="semtel">Sem telefone</option>
+    </select>
+    <select id="filtro-cidade" onchange="filtrar()">
+      <option value="todas">Todas as cidades</option>
+    </select>
+    <span class="badge-count" id="badge-count">0</span>
+    <button onclick="limparEnvios()" style="background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:.82rem;font-weight:600;">🗑 Limpar enviados</button>
+  </div>
+
+  <!-- Tabela -->
+  <div class="table-wrap" id="table-wrap" style="display:none">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="ordenar('nome')">Nome ↕</th>
+          <th>Documento</th>
+          <th>Telefone</th>
+          <th>Cidade</th>
+          <th onclick="ordenar('tpv')">TPV Médio ↕</th>
+          <th onclick="ordenar('m0')">M0 ↕</th>
+          <th onclick="ordenar('m1')">M1 ↕</th>
+          <th onclick="ordenar('m2')">M2 ↕</th>
+          <th onclick="ordenar('m3')">M3 ↕</th>
+          <th>Status</th>
+          <th>Enviado em</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">Nenhum cliente encontrado</div>
+  </div>
+
+</div>
+
+<script>
+  let dadosStone = null;
+  let dadosTon   = null;
+  let dadosCSV   = null;
+  let todosClientes = [];
+  let envios    = {};
+  let pendentes = {};
+  let ordemCol  = 'tpv';
+  let ordemAsc  = false;
+
+  /* ── Erro visível ── */
+  function mostrarErro(msg) {
+    let el = document.getElementById('erro-box');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'erro-box';
+      el.style.cssText = 'background:#fee2e2;border:1.5px solid #f87171;border-radius:10px;padding:16px 20px;margin-bottom:16px;color:#991b1b;font-size:.9rem;white-space:pre-wrap;';
+      document.querySelector('.container').prepend(el);
+    }
+    el.textContent = '⚠️ ' + msg;
+    el.style.display = 'block';
+  }
+
+  function lerUm(input, cb) {
+    const file = input.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const wb = XLSX.read(e.target.result, { type:'array', codepage:1252 });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { header:1 });
+        if (!data || data.length < 2) { mostrarErro('Arquivo sem dados: ' + file.name); return; }
+        cb(data, file.name);
+      } catch(err) { mostrarErro('Erro ao ler "' + file.name + '":\n' + err.message); }
+    };
+    reader.onerror = () => mostrarErro('Não foi possível ler: ' + file.name);
+    reader.readAsArrayBuffer(file);
+  }
+
+  /* ── Passo 1: Stone ── */
+  function carregarStone(input) {
+    lerUm(input, (data, nome) => {
+      dadosStone = data;
+      document.getElementById('status1').textContent = `✅ ${data.length - 1} clientes — ${nome}`;
+      document.getElementById('status1').classList.add('show');
+      document.getElementById('btn1').classList.add('ok-stone');
+      document.getElementById('step1').classList.replace('active', 'done');
+      document.getElementById('step2').classList.add('active');
+      tentarCruzar();
+    });
+  }
+
+  /* ── Passo 2: Base Ton ── */
+  function carregarTon(input) {
+    lerUm(input, (data, nome) => {
+      dadosTon = data;
+      document.getElementById('status2').textContent = `✅ ${data.length - 1} clientes — ${nome}`;
+      document.getElementById('status2').classList.add('show');
+      document.getElementById('btn2').classList.add('ok-ton');
+      document.getElementById('step2').classList.replace('active', 'done-ton');
+      document.getElementById('step3').classList.add('active');
+      tentarCruzar();
+    });
+  }
+
+  /* ── Passo 3: CSVs das cidades ── */
+  function carregarCSVs(input) {
+    const files = Array.from(input.files);
+    if (!files.length) return;
+
+    const resultados = new Array(files.length).fill(null);
+    let carregados = 0;
+
+    files.forEach((file, idx) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const wb = XLSX.read(e.target.result, { type:'array', codepage:1252 });
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          resultados[idx] = XLSX.utils.sheet_to_json(ws, { header:1 });
+        } catch(err) {
+          mostrarErro('Erro ao ler "' + file.name + '":\n' + err.message); return;
+        }
+        carregados++;
+        if (carregados === files.length) {
+          const header = resultados[0][0];
+          dadosCSV = [header];
+          resultados.forEach(data => {
+            for (let i = 1; i < data.length; i++) dadosCSV.push(data[i]);
+          });
+          document.getElementById('status3').textContent = `✅ ${files.length} arquivo(s) — ${dadosCSV.length - 1} cadastros`;
+          document.getElementById('status3').classList.add('show');
+          document.getElementById('btn3').classList.add('ok-stone');
+          document.getElementById('step3').classList.replace('active', 'done');
+          tentarCruzar();
+        }
+      };
+      reader.onerror = () => mostrarErro('Não foi possível ler: ' + file.name);
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
+  /* ── Cruzamento principal ── */
+  function tentarCruzar() {
+    if (!dadosStone || !dadosTon || !dadosCSV) return;
+
+    // ── Set de documentos Stone (para flag "já é Stone")
+    const hS   = dadosStone[0].map(c => String(c || ''));
+    const iDocS = hS.findIndex(c => /documento|cnpj|cpf/i.test(c));
+    const docsStone = new Set();
+    for (let i = 1; i < dadosStone.length; i++) {
+      const doc = String(dadosStone[i][iDocS] || '').replace(/\D/g, '');
+      if (doc) docsStone.add(doc);
+    }
+
+    // ── Mapa de cadastros das cidades: doc → { nome, tel, contato }
+    const hC      = dadosCSV[0].map(c => String(c || ''));
+    const iDocC   = hC.findIndex(c => /cnpj|cpf/i.test(c));
+    const iNomeC  = hC.findIndex(c => /nome.fantasia/i.test(c));
+    const iRazaoC = hC.findIndex(c => /raz.o.social/i.test(c));
+    const iTelC   = hC.findIndex(c => /telefone/i.test(c));
+    const iContatoC = hC.findIndex(c => /^contato$/i.test(c));
+
+    const mapNome    = {};
+    const mapTel     = {};
+    const mapContato = {};
+    for (let i = 1; i < dadosCSV.length; i++) {
+      const row  = dadosCSV[i];
+      const doc  = String(row[iDocC] || '').replace(/\D/g, '');
+      if (!doc) continue;
+      const nome = String(row[iNomeC] || row[iRazaoC] || '').trim();
+      const tel  = extrairTelefone(String(row[iTelC] || ''));
+      const cont = String(row[iContatoC] || '').trim();
+      if (nome) mapNome[doc]    = nome;
+      if (tel)  mapTel[doc]     = tel;
+      if (cont) mapContato[doc] = cont;
+    }
+
+    // ── Processa Base Ton
+    const hT = dadosTon[0].map(c => String(c || ''));
+    // Colunas conhecidas da Base Ton.xlsx
+    const iDocT  = hT.findIndex(c => /n.m.*documento|documento/i.test(c));
+    const iCidT  = hT.findIndex(c => /^cidade$/i.test(c));
+    const iTpv   = [0,1,2,3].map(n => hT.findIndex(c => new RegExp('^tpv_m' + n + '$','i').test(c)));
+
+    const cidadesSet = new Set();
+    const clientes = [];
+
+    for (let i = 1; i < dadosTon.length; i++) {
+      const row = dadosTon[i];
+      const doc = String(row[iDocT] || '').replace(/\D/g, '');
+      if (!doc) continue;
+
+      const cidade = String(row[iCidT] || '').trim();
+      const tpvVals = iTpv
+        .map(idx => (idx >= 0 ? parseFloat(String(row[idx] || '').replace(',','.')) || 0 : 0));
+      const tpvMedia = tpvVals.reduce((a,b) => a+b, 0) / 4;
+
+      const nome    = mapNome[doc] || mapContato[doc] || doc;
+      const tel     = mapTel[doc] || '';
+      const jaStone = docsStone.has(doc);
+
+      if (cidade) cidadesSet.add(cidade);
+
+      clientes.push({ nome, doc, tel, cidade, tpv: tpvMedia, m0: tpvVals[0], m1: tpvVals[1], m2: tpvVals[2], m3: tpvVals[3], jaStone });
+    }
+
+    clientes.sort((a, b) => b.tpv - a.tpv);
+    todosClientes = clientes;
+
+    // Popula filtro de cidades
+    const sel = document.getElementById('filtro-cidade');
+    sel.innerHTML = '<option value="todas">Todas as cidades</option>';
+    [...cidadesSet].sort().forEach(c => {
+      const op = document.createElement('option');
+      op.value = c; op.textContent = c;
+      sel.appendChild(op);
+    });
+
+    atualizarStats(clientes);
+    filtrar();
+
+    document.getElementById('stats').style.display      = 'grid';
+    document.getElementById('msg-box').style.display    = 'block';
+    document.getElementById('toolbar').style.display    = 'flex';
+    document.getElementById('table-wrap').style.display = 'block';
+  }
+
+  function extrairTelefone(str) {
+    const partes = str.split('/');
+    const num = String(partes[0]).replace(/\D/g, '');
+    return num.length >= 10 ? num : '';
+  }
+
+  /* ── Stats ── */
+  function atualizarStats(clientes) {
+    const novos   = clientes.filter(c => !c.jaStone);
+    const jaStone = clientes.filter(c =>  c.jaStone);
+    const semTel  = novos.filter(c => !c.tel);
+    const tpvSum  = novos.reduce((s,c) => s + c.tpv, 0);
+    document.getElementById('stat-ton').textContent     = clientes.length;
+    document.getElementById('stat-novos').textContent   = novos.length;
+    document.getElementById('stat-jastone').textContent = jaStone.length;
+    document.getElementById('stat-semtel').textContent  = semTel.length;
+    document.getElementById('stat-tpv').textContent     = 'R$ ' + (novos.length ? tpvSum / novos.length : 0).toLocaleString('pt-BR',{maximumFractionDigits:0});
+  }
+
+  /* ── Ordenação ── */
+  function ordenar(col) {
+    if (ordemCol === col) ordemAsc = !ordemAsc;
+    else { ordemCol = col; ordemAsc = col === 'nome'; }
+    filtrar();
+  }
+
+  /* ── Filtro ── */
+  function filtrar() {
+    const q      = document.getElementById('busca').value.toLowerCase();
+    const tpvMin = parseFloat(document.getElementById('tpv-min').value) || 0;
+    const fS     = document.getElementById('filtro-stone').value;
+    const fT     = document.getElementById('filtro-tel').value;
+    const fC     = document.getElementById('filtro-cidade').value;
+
+    let lista = todosClientes.filter(c =>
+      (c.nome.toLowerCase().includes(q) || c.doc.includes(q)) &&
+      c.tpv >= tpvMin &&
+      (fS === 'todos' || (fS === 'novos' && !c.jaStone) || (fS === 'jastone' && c.jaStone)) &&
+      (fT === 'todos' || (fT === 'comtel' && c.tel) || (fT === 'semtel' && !c.tel)) &&
+      (fC === 'todas' || c.cidade === fC)
+    );
+
+    lista.sort((a, b) => {
+      let va = a[ordemCol], vb = b[ordemCol];
+      if (typeof va === 'string') va = va.toLowerCase();
+      if (typeof vb === 'string') vb = vb.toLowerCase();
+      return ordemAsc ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+    });
+
+    renderizar(lista);
+  }
+
+  /* ── Tabela ── */
+  function renderizar(clientes) {
+    const tbody = document.getElementById('tbody');
+    const empty = document.getElementById('empty');
+    document.getElementById('badge-count').textContent = clientes.length + ' clientes';
+    if (!clientes.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = clientes.map(c => {
+      const telFmt = c.tel
+        ? `<span class="tel-ok">(${c.tel.slice(0,2)}) ${c.tel.length===11 ? c.tel.slice(2,7)+'-'+c.tel.slice(7) : c.tel.slice(2,6)+'-'+c.tel.slice(6)}</span>`
+        : `<span class="tel-no">Sem telefone</span>`;
+
+      const tpvFmt = 'R$ ' + c.tpv.toLocaleString('pt-BR',{maximumFractionDigits:0});
+      const tpvCls = c.tpv >= 7000 ? 'tpv-high' : c.tpv >= 3000 ? 'tpv-mid' : 'tpv-low';
+
+      const docFmt = c.doc.length === 11
+        ? c.doc.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+        : c.doc.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+
+      const badge = c.jaStone
+        ? `<span class="badge-stone">✅ Já é Stone</span>`
+        : `<span class="badge-alvo">🎯 Alvo</span>`;
+
+      const enviadoEm  = envios[c.doc] || '';
+      const enviadoFmt = enviadoEm
+        ? `<span style="font-size:.78rem;color:var(--green);font-weight:600">✅ ${enviadoEm}</span>`
+        : `<span style="color:#d1d5db;font-size:.78rem">—</span>`;
+
+      const cJson = JSON.stringify(c).replace(/'/g, '&#39;');
+      let btnAcao;
+      if (c.jaStone) {
+        btnAcao = `<button class="btn-wpp" disabled>🚫 Já é Stone</button>`;
+      } else if (enviadoEm) {
+        btnAcao = `<button class="btn-wpp" disabled>✅ Enviado</button>`;
+      } else if (pendentes[c.doc]) {
+        btnAcao = `<button class="btn-confirmar" onclick='marcarEnviado(${cJson})'>✅ Marcar enviado</button>`;
+      } else {
+        btnAcao = `<button class="btn-wpp" onclick='abrirWhatsApp(${cJson})' ${!c.tel?'disabled':''}>💬 Abrir WhatsApp</button>`;
+      }
+
+      return `<tr id="row-${c.doc}" class="${c.jaStone?'ja-stone':''}">
+        <td style="font-weight:600">${c.nome}</td>
+        <td style="font-size:.8rem;color:#6b7280">${docFmt}</td>
+        <td>${telFmt}</td>
+        <td style="font-size:.82rem;color:#6b7280">${c.cidade}</td>
+        <td class="td-tpv ${tpvCls}">${tpvFmt}</td>
+        <td style="font-size:.82rem;color:#6b7280">${fmtTpv(c.m0)}</td>
+        <td style="font-size:.82rem;color:#6b7280">${fmtTpv(c.m1)}</td>
+        <td style="font-size:.82rem;color:#6b7280">${fmtTpv(c.m2)}</td>
+        <td style="font-size:.82rem;color:#6b7280">${fmtTpv(c.m3)}</td>
+        <td>${badge}</td>
+        <td>${enviadoFmt}</td>
+        <td>${btnAcao}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function fmtTpv(v) {
+    if (!v) return '<span style="color:#d1d5db">—</span>';
+    return 'R$ ' + v.toLocaleString('pt-BR',{maximumFractionDigits:0});
+  }
+
+  /* ── WhatsApp ── */
+  function abrirWhatsApp(c) {
+    const msg = document.getElementById('msg-template').value.replace(/{nome}/g, c.nome);
+    window.open(`https://wa.me/55${c.tel}?text=${encodeURIComponent(msg)}`, '_blank');
+    pendentes[c.doc] = true;
+    const cJson = JSON.stringify(c).replace(/'/g, '&#39;');
+    const row = document.getElementById('row-' + c.doc);
+    if (row) row.cells[11].innerHTML = `<button class="btn-confirmar" onclick='marcarEnviado(${cJson})'>✅ Marcar enviado</button>`;
+  }
+
+  function marcarEnviado(c) {
+    const agora = new Date();
+    const fmt = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    envios[c.doc] = fmt;
+    delete pendentes[c.doc];
+    localStorage.setItem('ton_envios', JSON.stringify(envios));
+    const row = document.getElementById('row-' + c.doc);
+    if (row) {
+      row.cells[10].innerHTML = `<span style="font-size:.78rem;color:var(--green);font-weight:600">✅ ${fmt}</span>`;
+      row.cells[11].innerHTML = `<button class="btn-wpp" disabled>✅ Enviado</button>`;
+    }
+  }
+
+  function limparEnvios() {
+    if (!confirm('Apagar todo o histórico de envios?')) return;
+    envios = {}; pendentes = {};
+    localStorage.removeItem('ton_envios');
+    filtrar();
+  }
+
+  try { envios = JSON.parse(localStorage.getItem('ton_envios')) || {}; } catch(e) { envios = {}; }
+
+  if (typeof XLSX === 'undefined') {
+    mostrarErro('Biblioteca XLSX não carregou. Abra via http://localhost:8084');
+  }
+</script>
+</body>
+</html>
