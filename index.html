@@ -191,7 +191,7 @@
   <!-- Aviso base salva -->
   <div class="base-notice" id="base-notice" style="display:none">
     <span>📦 Base carregada · <strong id="notice-data"></strong> · <span id="notice-count"></span></span>
-    <span style="display:flex;align-items:center;gap:8px;"><span style="font-size:.75rem;color:#9ca3af">Clique em Admin para atualizar</span><button id="btn-sync" onclick="sincronizarAgora()" style="background:var(--green);color:white;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.75rem;font-weight:600;">☁️ Sincronizar</button></span>
+    <span style="display:flex;align-items:center;gap:8px;"><span style="font-size:.75rem;color:#9ca3af" id="notice-hint">Clique em Admin para atualizar</span><button id="btn-sync" onclick="sincronizarAgora()" style="display:none;background:var(--green);color:white;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.75rem;font-weight:600;">☁️ Sincronizar</button></span>
   </div>
 
   <!-- Stats -->
@@ -421,6 +421,7 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
       }
       return true;
     } catch(e) {
+      alert('⚠️ Erro: ' + e.message + '\n\nVerifique se o servidor local está rodando (Ton Captacao.bat).');
       return false;
     }
   }
@@ -896,6 +897,11 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
   }
 
   if (typeof XLSX==='undefined') alert('⚠️ Biblioteca XLSX não carregou. Abra via http://localhost:8084');
+
+  if (location.hostname === 'localhost') {
+    document.getElementById('btn-sync').style.display = 'inline-block';
+    document.getElementById('notice-hint').textContent = 'Servidor local ativo';
+  }
 
   init();
 </script>
