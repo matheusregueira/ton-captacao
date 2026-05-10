@@ -310,16 +310,6 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
       <div class="admin-steps">
 
         <div class="admin-step">
-          <h4>🔑 Token GitHub (configurar uma vez)</h4>
-          <p>Permite sincronizar a base para todo o time. Gere em: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → escopo <strong>repo</strong></p>
-          <div class="pass-row">
-            <input type="password" id="github-token-input" placeholder="ghp_..." style="font-family:monospace;font-size:.82rem;">
-            <button onclick="salvarGithubToken()">Salvar</button>
-          </div>
-          <div id="github-token-status" style="font-size:.75rem;margin-top:6px;"></div>
-        </div>
-
-        <div class="admin-step">
           <h4>🟢 Passo 1 — Carteira Stone</h4>
           <p>Base Stone — identifica quem já é cliente</p>
           <label class="upload-btn" id="abtn1">
@@ -418,30 +408,19 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
   }
 
   async function salvarGitHub(dados) {
-    if (!githubToken) return false;
     try {
-      const content = JSON.stringify(dados);
-      const base64  = btoa(unescape(encodeURIComponent(content)));
-      let sha = '';
-      try {
-        const r = await fetch(REPO_API, { headers: { Authorization: 'token ' + githubToken, Accept: 'application/vnd.github.v3+json' } });
-        if (r.ok) sha = (await r.json()).sha;
-      } catch(e) {}
-      const body = { message: 'Atualiza base Ton via dashboard', content: base64 };
-      if (sha) body.sha = sha;
-      const r = await fetch(REPO_API, {
-        method: 'PUT',
-        headers: { Authorization: 'token ' + githubToken, 'Content-Type': 'application/json', Accept: 'application/vnd.github.v3+json' },
-        body: JSON.stringify(body)
+      const r = await fetch('http://localhost:8084/salvar-base', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
       });
-      if (!r.ok) {
-        const err = await r.json().catch(() => ({}));
-        alert('⚠️ Erro ao salvar no GitHub (status ' + r.status + '): ' + (err.message || 'verifique o token'));
+      const res = await r.json();
+      if (!res.ok) {
+        alert('⚠️ Erro ao sincronizar: ' + (res.erro || 'erro desconhecido'));
         return false;
       }
       return true;
     } catch(e) {
-      alert('⚠️ Erro de conexão ao salvar no GitHub: ' + e.message);
       return false;
     }
   }
