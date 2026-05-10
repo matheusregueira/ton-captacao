@@ -224,6 +224,7 @@
 
     <div class="modal-section">
       <div class="modal-section-title">Contato</div>
+      <div class="modal-row"><span class="label">CPF / CNPJ</span><span class="valor" id="m-doc-field"></span></div>
       <div class="modal-row"><span class="label">Telefone</span><span class="valor" id="m-tel"></span></div>
       <div class="modal-row"><span class="label">Contato</span><span class="valor" id="m-contato"></span></div>
     </div>
@@ -520,13 +521,21 @@
       ? `(${c.tel.slice(0,2)}) ${c.tel.length===11?c.tel.slice(2,7)+'-'+c.tel.slice(7):c.tel.slice(2,6)+'-'+c.tel.slice(6)}`
       : '—';
 
-    document.getElementById('m-nome').textContent = c.nome;
-    document.getElementById('m-doc').textContent  = docFmt + (c.jaStone ? ' · ✅ Já é Stone' : ' · 🎯 Alvo');
-    document.getElementById('m-tel').textContent     = telFmt;
+    document.getElementById('m-nome').textContent      = c.nome;
+    document.getElementById('m-doc').textContent       = c.jaStone ? '✅ Já é Stone' : '🎯 Alvo';
+    document.getElementById('m-doc-field').textContent = docFmt;
+    document.getElementById('m-tel').textContent       = telFmt;
     document.getElementById('m-contato').textContent = c.contato || '—';
 
     const end = [c.end, c.num, c.comp].filter(Boolean).join(', ');
-    document.getElementById('m-end').textContent    = end || '—';
+    const endCompleto = [end, c.bairro, c.cidadeCSV || c.cidade, c.estado].filter(Boolean).join(', ');
+    const mapsUrl = endCompleto ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endCompleto)}` : '';
+    const endEl = document.getElementById('m-end');
+    if (end && mapsUrl) {
+      endEl.innerHTML = `${end} <a href="${mapsUrl}" target="_blank" style="font-size:.75rem;color:var(--green);margin-left:6px;text-decoration:none;">📍 Ver no Maps</a>`;
+    } else {
+      endEl.textContent = end || '—';
+    }
     document.getElementById('m-bairro').textContent = c.bairro || '—';
     document.getElementById('m-cidade').textContent = [c.cidadeCSV, c.estado].filter(Boolean).join(' / ') || c.cidade || '—';
     document.getElementById('m-cep').textContent    = c.cep ? String(c.cep).replace(/(\d{5})(\d{3})/,'$1-$2') : '—';
