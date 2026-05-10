@@ -10,29 +10,24 @@
     * { box-sizing:border-box; margin:0; padding:0; }
     body { font-family:'Segoe UI',system-ui,sans-serif; background:#f8fafc; color:var(--text); }
 
-    header { background:var(--green); color:white; padding:20px 40px; }
+    header { background:var(--green); color:white; padding:18px 40px; display:flex; align-items:center; justify-content:space-between; }
     header h1 { font-size:1.3rem; font-weight:700; }
     header p  { font-size:.85rem; opacity:.8; }
+    .btn-admin { background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.4); color:white; border-radius:8px; padding:8px 16px; cursor:pointer; font-size:.83rem; font-weight:600; transition:background .2s; white-space:nowrap; }
+    .btn-admin:hover { background:rgba(255,255,255,.25); }
 
     .container { max-width:1200px; margin:0 auto; padding:32px 24px; }
 
-    .steps { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:24px; }
-    .step { background:white; border-radius:12px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,.06); border:2px solid #e5e7eb; transition:border-color .2s; }
-    .step.done     { border-color:var(--green); }
-    .step.done-ton { border-color:var(--ton); }
-    .step.active   { border-color:#3b82f6; }
-    .step-num { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#9ca3af; margin-bottom:6px; }
-    .step h3  { font-size:1rem; font-weight:700; margin-bottom:4px; }
-    .step p   { font-size:.82rem; color:#6b7280; margin-bottom:12px; }
-    .upload-btn { display:inline-flex; align-items:center; gap:8px; background:#f1f5f9; border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 16px; cursor:pointer; font-size:.85rem; font-weight:600; transition:all .2s; color:var(--text); }
-    .upload-btn:hover { border-color:var(--green); background:#f0fdf7; }
-    .upload-btn.ok-stone { background:#f0fdf7; border-color:var(--green); color:var(--green); }
-    .upload-btn.ok-ton   { background:var(--ton-light); border-color:var(--ton); color:var(--ton); }
-    .step input[type=file] { display:none; }
-    .step-status { font-size:.78rem; margin-top:8px; display:none; font-weight:600; }
-    .step-status.show { display:block; }
+    /* Sem dados */
+    .sem-dados { text-align:center; padding:80px 24px; color:#9ca3af; }
+    .sem-dados h2 { font-size:1.1rem; margin-bottom:8px; color:#6b7280; }
 
-    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; margin:0 0 24px; }
+    /* Base salva notice */
+    .base-notice { background:white; border-radius:12px; padding:14px 20px; box-shadow:0 1px 4px rgba(0,0,0,.06); margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; font-size:.85rem; color:#6b7280; border-left:4px solid var(--green); }
+    .base-notice strong { color:var(--green); }
+
+    /* Stats */
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:16px; margin:0 0 24px; }
     .stat-card { background:white; border-radius:12px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
     .stat-card .val { font-size:1.8rem; font-weight:800; }
     .stat-card .val.green { color:var(--green); }
@@ -40,33 +35,37 @@
     .stat-card .val.gray  { color:#94a3b8; }
     .stat-card .lbl { font-size:.75rem; color:#6b7280; text-transform:uppercase; letter-spacing:.08em; margin-top:4px; }
 
+    /* Mensagem */
     .msg-box { background:white; border-radius:12px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,.06); margin-bottom:24px; }
     .msg-box label { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#6b7280; display:block; margin-bottom:8px; }
-    .msg-box textarea { width:100%; border:1.5px solid #e5e7eb; border-radius:8px; padding:12px; font-family:inherit; font-size:.9rem; resize:vertical; min-height:100px; outline:none; transition:border-color .2s; }
+    .msg-box textarea { width:100%; border:1.5px solid #e5e7eb; border-radius:8px; padding:12px; font-family:inherit; font-size:.9rem; resize:vertical; min-height:90px; outline:none; transition:border-color .2s; }
     .msg-box textarea:focus { border-color:var(--green); }
     .msg-box small { font-size:.73rem; color:#9ca3af; margin-top:6px; display:block; }
 
-    .toolbar { display:flex; gap:12px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
-    .toolbar input[type=text] { border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 14px; font-size:.9rem; outline:none; flex:1; min-width:180px; transition:border-color .2s; }
+    /* Toolbar */
+    .toolbar { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+    .toolbar input[type=text] { border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 14px; font-size:.9rem; outline:none; flex:1; min-width:160px; transition:border-color .2s; }
     .toolbar input[type=text]:focus { border-color:var(--green); }
-    .toolbar select { border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 12px; font-size:.88rem; outline:none; background:white; cursor:pointer; }
+    .toolbar select { border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 12px; font-size:.85rem; outline:none; background:white; cursor:pointer; max-width:170px; }
     .tpv-filter { display:flex; align-items:center; gap:8px; font-size:.85rem; color:#6b7280; white-space:nowrap; }
-    .tpv-filter input[type=number] { border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 12px; font-size:.88rem; outline:none; width:120px; }
+    .tpv-filter input[type=number] { border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 10px; font-size:.85rem; outline:none; width:110px; }
     .badge-count { background:var(--green); color:white; border-radius:100px; padding:4px 14px; font-size:.8rem; font-weight:700; white-space:nowrap; }
 
+    /* Tabela */
     .table-wrap { background:white; border-radius:12px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.06); }
     table { width:100%; border-collapse:collapse; font-size:.87rem; }
     thead th { background:#f8fafc; padding:12px 16px; text-align:left; font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:#6b7280; font-weight:700; border-bottom:1px solid #e5e7eb; cursor:pointer; user-select:none; white-space:nowrap; }
     thead th:hover { color:var(--green); }
     tbody tr { border-bottom:1px solid #f1f5f9; transition:background .15s; }
     tbody tr:hover { background:#f8fafc; }
-    tbody tr.ja-stone { opacity:.6; }
-    tbody td { padding:11px 16px; vertical-align:middle; }
+    tbody tr.ja-stone { opacity:.55; }
+    tbody td { padding:10px 16px; vertical-align:middle; }
 
-    .nome-link { color:var(--text); font-weight:600; cursor:pointer; text-decoration:none; border-bottom:1px dashed #d1d5db; transition:color .15s; }
+    .nome-link { color:var(--text); font-weight:600; cursor:pointer; border-bottom:1px dashed #d1d5db; transition:color .15s; }
     .nome-link:hover { color:var(--green); border-color:var(--green); }
 
     .badge-stone { background:#dcfce7; color:#166534; padding:3px 10px; border-radius:100px; font-size:.7rem; font-weight:700; white-space:nowrap; }
+    .badge-cred  { background:#bbf7d0; color:#14532d; padding:3px 10px; border-radius:100px; font-size:.7rem; font-weight:700; white-space:nowrap; }
     .badge-alvo  { background:#fff7ed; color:var(--ton); padding:3px 10px; border-radius:100px; font-size:.7rem; font-weight:700; border:1px solid #fed7aa; white-space:nowrap; }
 
     .td-tpv { font-weight:700; }
@@ -76,83 +75,92 @@
     .tel-ok { color:#374151; }
     .tel-no { color:#f87171; font-style:italic; font-size:.8rem; }
 
-    .btn-wpp { background:#25d366; color:white; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-size:.82rem; font-weight:600; display:flex; align-items:center; gap:6px; white-space:nowrap; transition:background .2s; }
+    .acoes { display:flex; flex-direction:column; gap:5px; }
+    .btn-wpp { background:#25d366; color:white; border:none; border-radius:8px; padding:7px 12px; cursor:pointer; font-size:.8rem; font-weight:600; display:flex; align-items:center; gap:5px; white-space:nowrap; transition:background .2s; }
     .btn-wpp:hover { background:#1ebe5a; }
     .btn-wpp:disabled { background:#e2e8f0; color:#94a3b8; cursor:not-allowed; }
-    .btn-confirmar { background:#f59e0b; color:white; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-size:.82rem; font-weight:600; display:flex; align-items:center; gap:6px; white-space:nowrap; transition:background .2s; }
+    .btn-confirmar { background:#f59e0b; color:white; border:none; border-radius:8px; padding:7px 12px; cursor:pointer; font-size:.8rem; font-weight:600; display:flex; align-items:center; gap:5px; white-space:nowrap; transition:background .2s; }
     .btn-confirmar:hover { background:#d97706; }
+    .btn-credenciar { background:white; color:var(--green-dark); border:1.5px solid var(--green); border-radius:8px; padding:6px 12px; cursor:pointer; font-size:.78rem; font-weight:600; display:flex; align-items:center; gap:5px; white-space:nowrap; transition:all .2s; }
+    .btn-credenciar:hover { background:var(--green); color:white; }
     .empty { text-align:center; padding:48px; color:#9ca3af; }
 
-    /* Modal */
-    .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center; }
+    /* Overlays e modais */
+    .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:100; align-items:center; justify-content:center; }
     .overlay.open { display:flex; }
-    .modal { background:white; border-radius:16px; padding:32px; width:480px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.2); position:relative; }
-    .modal-close { position:absolute; top:16px; right:16px; background:none; border:none; font-size:1.3rem; cursor:pointer; color:#9ca3af; line-height:1; }
+    .modal { background:white; border-radius:16px; padding:32px; width:500px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.2); position:relative; }
+    .modal-close { position:absolute; top:16px; right:16px; background:none; border:none; font-size:1.3rem; cursor:pointer; color:#9ca3af; }
     .modal-close:hover { color:var(--text); }
-    .modal-nome { font-size:1.15rem; font-weight:800; margin-bottom:4px; }
-    .modal-doc  { font-size:.8rem; color:#6b7280; margin-bottom:20px; }
-    .modal-section { margin-bottom:20px; }
-    .modal-section-title { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#9ca3af; margin-bottom:10px; }
+    .modal-nome { font-size:1.15rem; font-weight:800; margin-bottom:2px; }
+    .modal-sub  { font-size:.82rem; color:#6b7280; margin-bottom:20px; }
+    .modal-section { margin-bottom:18px; }
+    .modal-section-title { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#9ca3af; margin-bottom:8px; }
     .modal-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #f1f5f9; font-size:.88rem; }
     .modal-row:last-child { border-bottom:none; }
     .modal-row .label { color:#6b7280; }
-    .modal-row .valor { font-weight:600; }
+    .modal-row .valor { font-weight:600; text-align:right; }
 
     /* Barras TPV */
     .tpv-bars { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:4px; }
     .tpv-bar-col { text-align:center; }
-    .tpv-bar-wrap { height:80px; display:flex; align-items:flex-end; justify-content:center; margin-bottom:6px; }
-    .tpv-bar { width:32px; border-radius:4px 4px 0 0; min-height:4px; transition:height .3s; }
+    .tpv-bar-wrap { height:72px; display:flex; align-items:flex-end; justify-content:center; margin-bottom:6px; }
+    .tpv-bar { width:28px; border-radius:4px 4px 0 0; min-height:4px; }
     .tpv-bar.b0 { background:var(--green); }
     .tpv-bar.b1 { background:#34d399; }
     .tpv-bar.b2 { background:#6ee7b7; }
     .tpv-bar.b3 { background:#a7f3d0; }
     .tpv-bar-label { font-size:.7rem; color:#6b7280; font-weight:600; }
-    .tpv-bar-val   { font-size:.72rem; color:var(--text); font-weight:700; margin-top:2px; }
+    .tpv-bar-val   { font-size:.7rem; color:var(--text); font-weight:700; margin-top:2px; }
+
+    /* Admin modal */
+    .admin-modal { width:560px; }
+    .admin-steps { display:grid; gap:14px; margin-top:20px; }
+    .admin-step { background:#f8fafc; border-radius:10px; padding:16px 20px; border:1.5px solid #e5e7eb; }
+    .admin-step h4 { font-size:.9rem; font-weight:700; margin-bottom:4px; }
+    .admin-step p  { font-size:.8rem; color:#6b7280; margin-bottom:10px; }
+    .upload-btn { display:inline-flex; align-items:center; gap:8px; background:white; border:1.5px solid #d1d5db; border-radius:8px; padding:8px 14px; cursor:pointer; font-size:.83rem; font-weight:600; transition:all .2s; color:var(--text); }
+    .upload-btn:hover { border-color:var(--green); }
+    .upload-btn.ok { border-color:var(--green); color:var(--green); background:#f0fdf7; }
+    .upload-btn.ok-ton { border-color:var(--ton); color:var(--ton); background:var(--ton-light); }
+    .admin-step input[type=file] { display:none; }
+    .step-ok { font-size:.75rem; color:var(--green); font-weight:600; margin-top:6px; display:none; }
+    .step-ok.show { display:block; }
+    .pass-row { display:flex; gap:10px; margin-bottom:4px; }
+    .pass-row input { flex:1; border:1.5px solid #e5e7eb; border-radius:8px; padding:10px 14px; font-size:.9rem; outline:none; transition:border-color .2s; }
+    .pass-row input:focus { border-color:var(--green); }
+    .pass-row button { background:var(--green); color:white; border:none; border-radius:8px; padding:10px 20px; cursor:pointer; font-weight:700; font-size:.9rem; transition:background .2s; }
+    .pass-row button:hover { background:var(--green-dark); }
+    .pass-erro { font-size:.8rem; color:#ef4444; display:none; margin-top:4px; }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Captação Ton → Stone</h1>
-  <p>Stone Barbacena · Clientes Ton com potencial de migração</p>
+  <div style="display:flex;align-items:center;gap:16px">
+    <img src="logo.png" alt="Logo" style="height:40px;object-fit:contain;filter:brightness(0) invert(1);">
+    <div>
+      <h1>Captação Ton → Stone</h1>
+      <p>Stone Barbacena · Clientes Ton com potencial de migração</p>
+    </div>
+  </div>
+  <button class="btn-admin" onclick="abrirAdmin()">🔒 Admin</button>
 </header>
 
 <div class="container">
 
-  <div class="steps">
-    <div class="step active" id="step1">
-      <div class="step-num">Passo 1</div>
-      <h3>🟢 Carteira Stone</h3>
-      <p>Base Stone — só pra identificar quem já é cliente</p>
-      <label class="upload-btn" id="btn1">
-        📂 Carregar carteira Stone
-        <input type="file" id="file-stone" accept=".xlsx,.xls,.csv" onchange="carregarStone(this)">
-      </label>
-      <div class="step-status" id="status1" style="color:var(--green)"></div>
-    </div>
-    <div class="step" id="step2">
-      <div class="step-num">Passo 2</div>
-      <h3>🟠 Base Ton</h3>
-      <p>Arquivo <strong>Base Ton.xlsx</strong> com documentos e TPV</p>
-      <label class="upload-btn" id="btn2">
-        📂 Carregar Base Ton.xlsx
-        <input type="file" id="file-ton" accept=".xlsx,.xls,.csv" onchange="carregarTon(this)">
-      </label>
-      <div class="step-status" id="status2" style="color:var(--ton)"></div>
-    </div>
-    <div class="step" id="step3">
-      <div class="step-num">Passo 3</div>
-      <h3>📋 Cadastros das cidades</h3>
-      <p>Todos os CSVs de uma vez (Barbacena, Barroso, Carandaí...)</p>
-      <label class="upload-btn" id="btn3">
-        📂 Carregar todos os CSVs
-        <input type="file" id="file-csv" accept=".csv,.xlsx,.xls" multiple onchange="carregarCSVs(this)">
-      </label>
-      <div class="step-status" id="status3" style="color:var(--green)"></div>
-    </div>
+  <!-- Sem dados -->
+  <div class="sem-dados" id="sem-dados" style="display:none">
+    <h2>📊 Base ainda não carregada</h2>
+    <p>Solicite ao administrador que atualize a base de dados.</p>
   </div>
 
+  <!-- Aviso base salva -->
+  <div class="base-notice" id="base-notice" style="display:none">
+    <span>📦 Base carregada · <strong id="notice-data"></strong> · <span id="notice-count"></span></span>
+    <span style="font-size:.75rem;color:#9ca3af">Clique em Admin para atualizar</span>
+  </div>
+
+  <!-- Stats -->
   <div class="stats" id="stats" style="display:none">
     <div class="stat-card"><div class="val ton"  id="stat-ton">0</div><div class="lbl">Clientes Ton</div></div>
     <div class="stat-card"><div class="val green" id="stat-novos">0</div><div class="lbl">Alvos</div></div>
@@ -161,12 +169,15 @@
     <div class="stat-card"><div class="val green" id="stat-tpv">R$ 0</div><div class="lbl">TPV médio (alvos)</div></div>
   </div>
 
+  <!-- Mensagem -->
   <div class="msg-box" id="msg-box" style="display:none">
     <label>Mensagem — use {nome} para o nome do cliente</label>
-    <textarea id="msg-template">Oi, {nome}! Aqui é da Stone Barbacena. Vi que você usa a Ton — a Stone tem condições melhores pra antecipar seus recebíveis com taxas mais competitivas. Posso te contar mais em 2 minutinhos? 💚</textarea>
-    <small>O botão abre o WhatsApp já com a mensagem. Clique em enviar lá, depois volte e confirme aqui.</small>
+    <textarea id="msg-template">Oi, {nome}! Você usa a Ton, mas na Stone a antecipação tem taxa menor e o dinheiro cai no mesmo dia. 💚
+Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</textarea>
+    <small>O botão abre o WhatsApp já com a mensagem. Envie lá, depois volte e confirme aqui.</small>
   </div>
 
+  <!-- Toolbar -->
   <div class="toolbar" id="toolbar" style="display:none">
     <input type="text" id="busca" placeholder="Buscar por nome ou documento..." oninput="filtrar()">
     <div class="tpv-filter">
@@ -178,25 +189,30 @@
       <option value="todos">Todos</option>
       <option value="jastone">Já são Stone</option>
     </select>
+    <select id="filtro-cidade" onchange="atualizarBairros(); filtrar()">
+      <option value="todas">Todas as cidades</option>
+    </select>
+    <select id="filtro-bairro" onchange="filtrar()">
+      <option value="todos">Todos os bairros</option>
+    </select>
     <select id="filtro-tel" onchange="filtrar()">
       <option value="todos">Todos</option>
       <option value="comtel">Com telefone</option>
       <option value="semtel">Sem telefone</option>
     </select>
-    <select id="filtro-cidade" onchange="filtrar()">
-      <option value="todas">Todas as cidades</option>
-    </select>
     <span class="badge-count" id="badge-count">0</span>
-    <button onclick="limparEnvios()" style="background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:.82rem;font-weight:600;">🗑 Limpar enviados</button>
+    <button onclick="limparEnvios()" style="background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:.8rem;font-weight:600;">🗑 Limpar enviados</button>
   </div>
 
+  <!-- Tabela -->
   <div class="table-wrap" id="table-wrap" style="display:none">
     <table>
       <thead>
         <tr>
           <th onclick="ordenar('nome')">Nome ↕</th>
           <th>Telefone</th>
-          <th>Cidade</th>
+          <th onclick="ordenar('cidade')">Cidade ↕</th>
+          <th>Bairro</th>
           <th onclick="ordenar('tpv')">TPV Médio ↕</th>
           <th>Status</th>
           <th>Enviado em</th>
@@ -210,12 +226,12 @@
 
 </div>
 
-<!-- Modal de detalhes -->
-<div class="overlay" id="overlay" onclick="fecharModal(event)">
-  <div class="modal" id="modal">
-    <button class="modal-close" onclick="fecharModal()">✕</button>
+<!-- Modal detalhes cliente -->
+<div class="overlay" id="overlay-cliente" onclick="fecharModal(event)">
+  <div class="modal" id="modal-cliente">
+    <button class="modal-close" onclick="fecharModalCliente()">✕</button>
     <div class="modal-nome" id="m-nome"></div>
-    <div class="modal-doc"  id="m-doc"></div>
+    <div class="modal-sub"  id="m-doc"></div>
 
     <div class="modal-section">
       <div class="modal-section-title">Volume de transações</div>
@@ -224,7 +240,7 @@
 
     <div class="modal-section">
       <div class="modal-section-title">Contato</div>
-      <div class="modal-row"><span class="label">CPF / CNPJ</span><span class="valor" id="m-doc-field"></span></div>
+      <div class="modal-row"><span class="label">CPF / CNPJ</span><span class="valor" id="m-docfield"></span></div>
       <div class="modal-row"><span class="label">Telefone</span><span class="valor" id="m-tel"></span></div>
       <div class="modal-row"><span class="label">Contato</span><span class="valor" id="m-contato"></span></div>
     </div>
@@ -241,22 +257,164 @@
   </div>
 </div>
 
+<!-- Modal admin -->
+<div class="overlay" id="overlay-admin" onclick="fecharAdmin(event)">
+  <div class="modal admin-modal">
+    <button class="modal-close" onclick="fecharAdminForce()">✕</button>
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px">🔒 Área do administrador</h2>
+    <p style="font-size:.83rem;color:#6b7280;margin-bottom:20px">Suba as planilhas para atualizar a base do time.</p>
+
+    <div id="admin-auth">
+      <div class="pass-row">
+        <input type="password" id="admin-pass" placeholder="Senha" onkeydown="if(event.key==='Enter')verificarSenha()">
+        <button onclick="verificarSenha()">Entrar</button>
+      </div>
+      <div class="pass-erro" id="pass-erro">Senha incorreta.</div>
+    </div>
+
+    <div id="admin-steps" style="display:none">
+      <div class="admin-steps">
+
+        <div class="admin-step">
+          <h4>🟢 Passo 1 — Carteira Stone</h4>
+          <p>Base Stone — identifica quem já é cliente</p>
+          <label class="upload-btn" id="abtn1">
+            📂 Carregar carteira Stone
+            <input type="file" id="afile-stone" accept=".xlsx,.xls,.csv" onchange="aCarregarStone(this)">
+          </label>
+          <div class="step-ok" id="aok1"></div>
+        </div>
+
+        <div class="admin-step">
+          <h4>🟠 Passo 2 — Base Ton</h4>
+          <p>Arquivo Base Ton.xlsx com documentos e TPV por mês</p>
+          <label class="upload-btn" id="abtn2">
+            📂 Carregar Base Ton.xlsx
+            <input type="file" id="afile-ton" accept=".xlsx,.xls,.csv" onchange="aCarregarTon(this)">
+          </label>
+          <div class="step-ok" id="aok2"></div>
+        </div>
+
+        <div class="admin-step">
+          <h4>📋 Passo 3 — Cadastros das cidades</h4>
+          <p>Selecione todos os CSVs de uma vez (Barbacena, Barroso, Carandaí, Dores...)</p>
+          <label class="upload-btn" id="abtn3">
+            📂 Carregar todos os CSVs
+            <input type="file" id="afile-csv" accept=".csv,.xlsx,.xls" multiple onchange="aCarregarCSVs(this)">
+          </label>
+          <div class="step-ok" id="aok3"></div>
+        </div>
+
+      </div>
+      <div id="admin-salvando" style="display:none;text-align:center;padding:16px;color:var(--green);font-weight:600;font-size:.9rem;">
+        ⏳ Processando e salvando base...
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  let dadosStone = null, dadosTon = null, dadosCSV = null;
+  // ── Senha admin (altere aqui se quiser mudar) ──
+  const SENHA_ADMIN = 'stone2025';
+
   let todosClientes = [];
   let envios = {}, pendentes = {}, credenciados = {};
   let ordemCol = 'tpv', ordemAsc = false;
 
-  function mostrarErro(msg) {
-    let el = document.getElementById('erro-box');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'erro-box';
-      el.style.cssText = 'background:#fee2e2;border:1.5px solid #f87171;border-radius:10px;padding:16px 20px;margin-bottom:16px;color:#991b1b;font-size:.9rem;white-space:pre-wrap;';
-      document.querySelector('.container').prepend(el);
+  // Dados temporários para cruzamento (admin)
+  let _stone = null, _ton = null, _csv = null;
+
+  /* ════════════════════════════════════
+     INICIALIZAÇÃO — carrega do localStorage
+  ════════════════════════════════════ */
+  function init() {
+    try { envios       = JSON.parse(localStorage.getItem('ton_envios'))       || {}; } catch(e) { envios={}; }
+    try { credenciados = JSON.parse(localStorage.getItem('ton_credenciados')) || {}; } catch(e) { credenciados={}; }
+
+    const salvo = localStorage.getItem('ton_base');
+    if (salvo) {
+      try {
+        const { clientes, savedAt } = JSON.parse(salvo);
+        todosClientes = clientes;
+        document.getElementById('notice-data').textContent = 'Salvo em ' + new Date(savedAt).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+        document.getElementById('notice-count').textContent = clientes.length + ' clientes Ton';
+        document.getElementById('base-notice').style.display = 'flex';
+        mostrarDashboard();
+      } catch(e) {
+        document.getElementById('sem-dados').style.display = 'block';
+      }
+    } else {
+      document.getElementById('sem-dados').style.display = 'block';
     }
-    el.textContent = '⚠️ ' + msg;
-    el.style.display = 'block';
+  }
+
+  function mostrarDashboard() {
+    // Popula filtros de cidade e bairro
+    const cidades = [...new Set(todosClientes.map(c=>c.cidade).filter(Boolean))].sort();
+    const selC = document.getElementById('filtro-cidade');
+    selC.innerHTML = '<option value="todas">Todas as cidades</option>';
+    cidades.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; selC.appendChild(o); });
+
+    atualizarBairros();
+    atualizarStats(todosClientes);
+    filtrar();
+
+    document.getElementById('sem-dados').style.display     = 'none';
+    document.getElementById('stats').style.display         = 'grid';
+    document.getElementById('msg-box').style.display       = 'block';
+    document.getElementById('toolbar').style.display       = 'flex';
+    document.getElementById('table-wrap').style.display    = 'block';
+  }
+
+  function atualizarBairros() {
+    const cidade = document.getElementById('filtro-cidade').value;
+    const bairros = [...new Set(
+      todosClientes
+        .filter(c => cidade === 'todas' || c.cidade === cidade)
+        .map(c => c.bairro)
+        .filter(Boolean)
+    )].sort();
+    const selB = document.getElementById('filtro-bairro');
+    selB.innerHTML = '<option value="todos">Todos os bairros</option>';
+    bairros.forEach(b => { const o=document.createElement('option'); o.value=b; o.textContent=b; selB.appendChild(o); });
+  }
+
+  /* ════════════════════════════════════
+     ADMIN
+  ════════════════════════════════════ */
+  function abrirAdmin() {
+    document.getElementById('overlay-admin').classList.add('open');
+    document.getElementById('admin-auth').style.display  = 'block';
+    document.getElementById('admin-steps').style.display = 'none';
+    document.getElementById('pass-erro').style.display   = 'none';
+    document.getElementById('admin-pass').value = '';
+    setTimeout(() => document.getElementById('admin-pass').focus(), 100);
+  }
+
+  function fecharAdmin(e) {
+    if (e && e.target !== document.getElementById('overlay-admin')) return;
+    fecharAdminForce();
+  }
+  function fecharAdminForce() {
+    document.getElementById('overlay-admin').classList.remove('open');
+    _stone = null; _ton = null; _csv = null;
+  }
+
+  function verificarSenha() {
+    const val = document.getElementById('admin-pass').value;
+    if (val === SENHA_ADMIN) {
+      document.getElementById('admin-auth').style.display  = 'none';
+      document.getElementById('admin-steps').style.display = 'block';
+    } else {
+      document.getElementById('pass-erro').style.display = 'block';
+    }
+  }
+
+  /* ════════════════════════════════════
+     LEITURA DE ARQUIVOS (admin)
+  ════════════════════════════════════ */
+  function mostrarErro(msg) {
+    alert('⚠️ ' + msg);
   }
 
   function lerUm(input, cb) {
@@ -275,71 +433,77 @@
     reader.readAsArrayBuffer(file);
   }
 
-  function carregarStone(input) {
+  function aCarregarStone(input) {
     lerUm(input, (data, nome) => {
-      dadosStone = data;
-      document.getElementById('status1').textContent = `✅ ${data.length - 1} clientes — ${nome}`;
-      document.getElementById('status1').classList.add('show');
-      document.getElementById('btn1').classList.add('ok-stone');
-      document.getElementById('step1').classList.replace('active','done');
-      document.getElementById('step2').classList.add('active');
+      _stone = data;
+      document.getElementById('aok1').textContent = `✅ ${data.length-1} clientes — ${nome}`;
+      document.getElementById('aok1').classList.add('show');
+      document.getElementById('abtn1').classList.add('ok');
       tentarCruzar();
     });
   }
 
-  function carregarTon(input) {
+  function aCarregarTon(input) {
     lerUm(input, (data, nome) => {
-      dadosTon = data;
-      document.getElementById('status2').textContent = `✅ ${data.length - 1} clientes — ${nome}`;
-      document.getElementById('status2').classList.add('show');
-      document.getElementById('btn2').classList.add('ok-ton');
-      document.getElementById('step2').classList.replace('active','done-ton');
-      document.getElementById('step3').classList.add('active');
+      _ton = data;
+      document.getElementById('aok2').textContent = `✅ ${data.length-1} clientes — ${nome}`;
+      document.getElementById('aok2').classList.add('show');
+      document.getElementById('abtn2').classList.add('ok-ton');
       tentarCruzar();
     });
   }
 
-  function carregarCSVs(input) {
+  function aCarregarCSVs(input) {
     const files = Array.from(input.files); if (!files.length) return;
-    const resultados = new Array(files.length).fill(null);
-    let carregados = 0;
+    const res = new Array(files.length).fill(null);
+    let done = 0;
     files.forEach((file, idx) => {
       const reader = new FileReader();
       reader.onload = e => {
         try {
           const wb = XLSX.read(e.target.result, { type:'array', codepage:1252 });
-          resultados[idx] = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1 });
+          res[idx] = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1 });
         } catch(err) { mostrarErro('Erro: ' + file.name + ' — ' + err.message); return; }
-        carregados++;
-        if (carregados === files.length) {
-          dadosCSV = [resultados[0][0]];
-          resultados.forEach(d => { for (let i=1;i<d.length;i++) dadosCSV.push(d[i]); });
-          document.getElementById('status3').textContent = `✅ ${files.length} arquivo(s) — ${dadosCSV.length-1} cadastros`;
-          document.getElementById('status3').classList.add('show');
-          document.getElementById('btn3').classList.add('ok-stone');
-          document.getElementById('step3').classList.replace('active','done');
+        done++;
+        if (done === files.length) {
+          _csv = [res[0][0]];
+          res.forEach(d => { for (let i=1;i<d.length;i++) _csv.push(d[i]); });
+          document.getElementById('aok3').textContent = `✅ ${files.length} arquivo(s) — ${_csv.length-1} cadastros`;
+          document.getElementById('aok3').classList.add('show');
+          document.getElementById('abtn3').classList.add('ok');
           tentarCruzar();
         }
       };
-      reader.onerror = () => mostrarErro('Não foi possível ler: ' + file.name);
+      reader.onerror = () => mostrarErro('Erro: ' + file.name);
       reader.readAsArrayBuffer(file);
     });
   }
 
+  /* ════════════════════════════════════
+     CRUZAMENTO
+  ════════════════════════════════════ */
   function tentarCruzar() {
-    if (!dadosStone || !dadosTon || !dadosCSV) return;
+    if (!_stone || !_ton || !_csv) return;
 
-    // Set documentos Stone
-    const hS = dadosStone[0].map(c => String(c||''));
+    document.getElementById('admin-salvando').style.display = 'block';
+    setTimeout(() => {
+      try { _cruzar(); } catch(e) { mostrarErro('Erro no cruzamento: ' + e.message); }
+      document.getElementById('admin-salvando').style.display = 'none';
+    }, 50);
+  }
+
+  function _cruzar() {
+    // Documentos Stone
+    const hS = _stone[0].map(c => String(c||''));
     const iDocS = hS.findIndex(c => /documento|cnpj|cpf/i.test(c));
     const docsStone = new Set();
-    for (let i=1; i<dadosStone.length; i++) {
-      const d = String(dadosStone[i][iDocS]||'').replace(/\D/g,'');
+    for (let i=1; i<_stone.length; i++) {
+      const d = String(_stone[i][iDocS]||'').replace(/\D/g,'');
       if (d) docsStone.add(d);
     }
 
-    // Mapa cadastros das cidades
-    const hC = dadosCSV[0].map(c => String(c||''));
+    // Cadastros das cidades
+    const hC = _csv[0].map(c => String(c||''));
     const iDocC    = hC.findIndex(c => /cnpj|cpf/i.test(c));
     const iNomeC   = hC.findIndex(c => /nome.fantasia/i.test(c));
     const iRazaoC  = hC.findIndex(c => /raz.o.social/i.test(c));
@@ -354,55 +518,46 @@
     const iEstC    = hC.findIndex(c => /^estado$/i.test(c));
 
     const mapCad = {};
-    for (let i=1; i<dadosCSV.length; i++) {
-      const row = dadosCSV[i];
+    for (let i=1; i<_csv.length; i++) {
+      const row = _csv[i];
       const doc = String(row[iDocC]||'').replace(/\D/g,'');
       if (!doc) continue;
       mapCad[doc] = {
-        nome:     String(row[iNomeC]||row[iRazaoC]||'').trim(),
-        contato:  String(row[iContatoC]||'').trim(),
-        tel:      extrairTelefone(String(row[iTelC]||'')),
-        end:      String(row[iEndC]||'').trim(),
-        num:      String(row[iNumC]||'').trim(),
-        comp:     String(row[iCompC]||'').trim(),
-        bairro:   String(row[iBairroC]||'').trim(),
-        cep:      String(row[iCepC]||'').trim(),
-        cidadeCSV:String(row[iCidC]||'').trim(),
-        estado:   String(row[iEstC]||'').trim(),
+        nome:    String(row[iNomeC]||row[iRazaoC]||'').trim(),
+        contato: String(row[iContatoC]||'').trim(),
+        tel:     extrairTelefone(String(row[iTelC]||'')),
+        end:     String(row[iEndC]||'').trim(),
+        num:     String(row[iNumC]||'').trim(),
+        comp:    String(row[iCompC]||'').trim(),
+        bairro:  String(row[iBairroC]||'').trim(),
+        cep:     String(row[iCepC]||'').trim(),
+        cidadeCSV: String(row[iCidC]||'').trim(),
+        estado:  String(row[iEstC]||'').trim(),
       };
     }
 
-    // Processa Base Ton
-    const hT = dadosTon[0].map(c => String(c||''));
+    // Base Ton
+    const hT = _ton[0].map(c => String(c||''));
     const iDocT = hT.findIndex(c => /n.m.*documento|documento/i.test(c));
     const iCidT = hT.findIndex(c => /^cidade$/i.test(c));
     const iTpv  = [0,1,2,3].map(n => hT.findIndex(c => new RegExp('^tpv_m'+n+'$','i').test(c)));
 
-    const cidadesSet = new Set();
     const clientes = [];
-
-    for (let i=1; i<dadosTon.length; i++) {
-      const row = dadosTon[i];
+    for (let i=1; i<_ton.length; i++) {
+      const row = _ton[i];
       const doc = String(row[iDocT]||'').replace(/\D/g,'');
       if (!doc) continue;
-
-      const cidade = String(row[iCidT]||'').trim();
-      const tpvArr = iTpv.map(idx => idx>=0 ? (parseFloat(String(row[idx]||'').replace(',','.')) || 0) : 0);
+      const cidade  = String(row[iCidT]||'').trim();
+      const tpvArr  = iTpv.map(idx => idx>=0 ? (parseFloat(String(row[idx]||'').replace(',','.')) || 0) : 0);
       const tpvMedia = tpvArr.reduce((a,b)=>a+b,0) / 4;
-
       const cad = mapCad[doc] || {};
-      const nome = cad.nome || cad.contato || doc;
-      const tel  = cad.tel || '';
-
-      if (cidade) cidadesSet.add(cidade);
-
       clientes.push({
-        nome, doc, tel, cidade, tpv: tpvMedia,
-        m0: tpvArr[0], m1: tpvArr[1], m2: tpvArr[2], m3: tpvArr[3],
-        contato: cad.contato || '', end: cad.end || '', num: cad.num || '',
-        comp: cad.comp || '', bairro: cad.bairro || '',
-        cep: cad.cep || '', estado: cad.estado || '',
-        cidadeCSV: cad.cidadeCSV || cidade,
+        nome: cad.nome || cad.contato || doc,
+        doc, tel: cad.tel||'', cidade,
+        tpv: tpvMedia, m0: tpvArr[0], m1: tpvArr[1], m2: tpvArr[2], m3: tpvArr[3],
+        contato: cad.contato||'', end: cad.end||'', num: cad.num||'',
+        comp: cad.comp||'', bairro: cad.bairro||'', cep: cad.cep||'',
+        cidadeCSV: cad.cidadeCSV||cidade, estado: cad.estado||'',
         jaStone: docsStone.has(doc) || !!credenciados[doc],
       });
     }
@@ -410,20 +565,14 @@
     clientes.sort((a,b) => b.tpv - a.tpv);
     todosClientes = clientes;
 
-    const sel = document.getElementById('filtro-cidade');
-    sel.innerHTML = '<option value="todas">Todas as cidades</option>';
-    [...cidadesSet].sort().forEach(c => {
-      const op = document.createElement('option');
-      op.value = c; op.textContent = c; sel.appendChild(op);
-    });
+    // Salva no localStorage
+    localStorage.setItem('ton_base', JSON.stringify({ clientes, savedAt: new Date().toISOString() }));
+    document.getElementById('notice-data').textContent = 'Salvo agora';
+    document.getElementById('notice-count').textContent = clientes.length + ' clientes Ton';
+    document.getElementById('base-notice').style.display = 'flex';
 
-    atualizarStats(clientes);
-    filtrar();
-
-    document.getElementById('stats').style.display      = 'grid';
-    document.getElementById('msg-box').style.display    = 'block';
-    document.getElementById('toolbar').style.display    = 'flex';
-    document.getElementById('table-wrap').style.display = 'block';
+    fecharAdminForce();
+    mostrarDashboard();
   }
 
   function extrairTelefone(str) {
@@ -431,35 +580,40 @@
     return num.length >= 10 ? num : '';
   }
 
+  /* ════════════════════════════════════
+     STATS / FILTROS / TABELA
+  ════════════════════════════════════ */
   function atualizarStats(clientes) {
     const novos  = clientes.filter(c => !c.jaStone);
     const tpvSum = novos.reduce((s,c) => s+c.tpv, 0);
     document.getElementById('stat-ton').textContent     = clientes.length;
     document.getElementById('stat-novos').textContent   = novos.length;
-    document.getElementById('stat-jastone').textContent = clientes.filter(c => c.jaStone).length;
-    document.getElementById('stat-semtel').textContent  = novos.filter(c => !c.tel).length;
-    document.getElementById('stat-tpv').textContent     = 'R$ ' + (novos.length ? tpvSum/novos.length : 0).toLocaleString('pt-BR',{maximumFractionDigits:0});
+    document.getElementById('stat-jastone').textContent = clientes.filter(c=>c.jaStone).length;
+    document.getElementById('stat-semtel').textContent  = novos.filter(c=>!c.tel).length;
+    document.getElementById('stat-tpv').textContent     = 'R$ '+(novos.length?tpvSum/novos.length:0).toLocaleString('pt-BR',{maximumFractionDigits:0});
   }
 
   function ordenar(col) {
-    if (ordemCol === col) ordemAsc = !ordemAsc;
-    else { ordemCol = col; ordemAsc = col === 'nome'; }
+    if (ordemCol===col) ordemAsc=!ordemAsc;
+    else { ordemCol=col; ordemAsc=col==='nome'||col==='cidade'; }
     filtrar();
   }
 
   function filtrar() {
     const q      = document.getElementById('busca').value.toLowerCase();
-    const tpvMin = parseFloat(document.getElementById('tpv-min').value) || 0;
+    const tpvMin = parseFloat(document.getElementById('tpv-min').value)||0;
     const fS     = document.getElementById('filtro-stone').value;
-    const fT     = document.getElementById('filtro-tel').value;
     const fC     = document.getElementById('filtro-cidade').value;
+    const fB     = document.getElementById('filtro-bairro').value;
+    const fT     = document.getElementById('filtro-tel').value;
 
     let lista = todosClientes.filter(c =>
       (c.nome.toLowerCase().includes(q) || c.doc.includes(q)) &&
       c.tpv >= tpvMin &&
       (fS==='todos' || (fS==='novos' && !c.jaStone) || (fS==='jastone' && c.jaStone)) &&
-      (fT==='todos' || (fT==='comtel' && c.tel) || (fT==='semtel' && !c.tel)) &&
-      (fC==='todas' || c.cidade===fC)
+      (fC==='todas' || c.cidade===fC) &&
+      (fB==='todos' || c.bairro===fB) &&
+      (fT==='todos' || (fT==='comtel' && c.tel) || (fT==='semtel' && !c.tel))
     );
 
     lista.sort((a,b) => {
@@ -484,40 +638,49 @@
         ? `<span class="tel-ok">(${c.tel.slice(0,2)}) ${c.tel.length===11?c.tel.slice(2,7)+'-'+c.tel.slice(7):c.tel.slice(2,6)+'-'+c.tel.slice(6)}</span>`
         : `<span class="tel-no">Sem telefone</span>`;
 
-      const tpvFmt = 'R$ ' + c.tpv.toLocaleString('pt-BR',{maximumFractionDigits:0});
+      const tpvFmt = 'R$ '+c.tpv.toLocaleString('pt-BR',{maximumFractionDigits:0});
       const tpvCls = c.tpv>=7000?'tpv-high':c.tpv>=3000?'tpv-mid':'tpv-low';
+
       const badge = credenciados[c.doc]
-        ? `<span class="badge-stone">✅ Credenciado</span>`
+        ? `<span class="badge-cred">✅ Credenciado</span>`
         : c.jaStone
           ? `<span class="badge-stone">✅ Já é Stone</span>`
           : `<span class="badge-alvo">🎯 Alvo</span>`;
 
       const enviadoEm  = envios[c.doc]||'';
       const enviadoFmt = enviadoEm
-        ? `<span style="font-size:.78rem;color:var(--green);font-weight:600">✅ ${enviadoEm}</span>`
-        : `<span style="color:#d1d5db;font-size:.78rem">—</span>`;
+        ? `<span style="font-size:.75rem;color:var(--green);font-weight:600">✅ ${enviadoEm}</span>`
+        : `<span style="color:#d1d5db;font-size:.75rem">—</span>`;
 
       const cJson = JSON.stringify(c).replace(/'/g,"&#39;");
-      let btnAcao;
-      if (c.jaStone)       btnAcao = `<button class="btn-wpp" disabled>🚫 Já é Stone</button>`;
-      else if (enviadoEm)  btnAcao = `<button class="btn-wpp" disabled>✅ Enviado</button>`;
-      else if (pendentes[c.doc]) btnAcao = `<button class="btn-confirmar" onclick='marcarEnviado(${cJson})'>✅ Marcar enviado</button>`;
-      else btnAcao = `<button class="btn-wpp" onclick='abrirWhatsApp(${cJson})' ${!c.tel?'disabled':''}>💬 Abrir WhatsApp</button>`;
+
+      let btnWpp;
+      if (c.jaStone)            btnWpp = `<button class="btn-wpp" disabled>🚫 Já é Stone</button>`;
+      else if (enviadoEm)       btnWpp = `<button class="btn-wpp" disabled>✅ Enviado</button>`;
+      else if (pendentes[c.doc])btnWpp = `<button class="btn-confirmar" onclick='marcarEnviado(${cJson})'>✅ Confirmar envio</button>`;
+      else                      btnWpp = `<button class="btn-wpp" onclick='abrirWhatsApp(${cJson})' ${!c.tel?'disabled':''}>💬 WhatsApp</button>`;
+
+      const btnCred = (!c.jaStone)
+        ? `<button class="btn-credenciar" onclick='credenciarStone(${cJson})'>🟢 Credenciar Stone</button>`
+        : '';
 
       return `<tr id="row-${c.doc}" class="${c.jaStone?'ja-stone':''}">
-        <td><span class="nome-link" onclick='abrirModal(${cJson})'>${c.nome}</span></td>
+        <td><span class="nome-link" onclick='abrirModalCliente(${cJson})'>${c.nome}</span></td>
         <td>${telFmt}</td>
         <td style="font-size:.82rem;color:#6b7280">${c.cidade}</td>
+        <td style="font-size:.82rem;color:#6b7280">${c.bairro||'—'}</td>
         <td class="td-tpv ${tpvCls}">${tpvFmt}</td>
         <td>${badge}</td>
         <td>${enviadoFmt}</td>
-        <td>${btnAcao}</td>
+        <td><div class="acoes">${btnWpp}${btnCred}</div></td>
       </tr>`;
     }).join('');
   }
 
-  /* ── Modal ── */
-  function abrirModal(c) {
+  /* ════════════════════════════════════
+     MODAL CLIENTE
+  ════════════════════════════════════ */
+  function abrirModalCliente(c) {
     const docFmt = c.doc.length===11
       ? c.doc.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4')
       : c.doc.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,'$1.$2.$3/$4-$5');
@@ -525,73 +688,69 @@
       ? `(${c.tel.slice(0,2)}) ${c.tel.length===11?c.tel.slice(2,7)+'-'+c.tel.slice(7):c.tel.slice(2,6)+'-'+c.tel.slice(6)}`
       : '—';
 
-    document.getElementById('m-nome').textContent      = c.nome;
-    document.getElementById('m-doc').textContent       = c.jaStone ? '✅ Já é Stone' : '🎯 Alvo';
-    document.getElementById('m-doc-field').textContent = docFmt;
-    document.getElementById('m-tel').textContent       = telFmt;
-    document.getElementById('m-contato').textContent = c.contato || '—';
+    document.getElementById('m-nome').textContent     = c.nome;
+    document.getElementById('m-doc').textContent      = credenciados[c.doc] ? '✅ Credenciado na Stone' : c.jaStone ? '✅ Já é Stone' : '🎯 Alvo';
+    document.getElementById('m-docfield').textContent = docFmt;
+    document.getElementById('m-tel').textContent      = telFmt;
+    document.getElementById('m-contato').textContent  = c.contato||'—';
 
     const end = [c.end, c.num, c.comp].filter(Boolean).join(', ');
-    const endCompleto = [end, c.bairro, c.cidadeCSV || c.cidade, c.estado].filter(Boolean).join(', ');
+    const endCompleto = [end, c.bairro, c.cidadeCSV||c.cidade, c.estado].filter(Boolean).join(', ');
     const mapsUrl = endCompleto ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endCompleto)}` : '';
     const endEl = document.getElementById('m-end');
-    if (end && mapsUrl) {
-      endEl.innerHTML = `${end} <a href="${mapsUrl}" target="_blank" style="font-size:.75rem;color:var(--green);margin-left:6px;text-decoration:none;">📍 Ver no Maps</a>`;
-    } else {
-      endEl.textContent = end || '—';
-    }
-    document.getElementById('m-bairro').textContent = c.bairro || '—';
-    document.getElementById('m-cidade').textContent = [c.cidadeCSV, c.estado].filter(Boolean).join(' / ') || c.cidade || '—';
+    if (end && mapsUrl) endEl.innerHTML = `${end} <a href="${mapsUrl}" target="_blank" style="font-size:.75rem;color:var(--green);margin-left:6px;text-decoration:none;">📍 Maps</a>`;
+    else endEl.textContent = end||'—';
+
+    document.getElementById('m-bairro').textContent = c.bairro||'—';
+    document.getElementById('m-cidade').textContent = [c.cidadeCSV, c.estado].filter(Boolean).join(' / ')||c.cidade||'—';
     document.getElementById('m-cep').textContent    = c.cep ? String(c.cep).replace(/(\d{5})(\d{3})/,'$1-$2') : '—';
 
-    // Barras TPV
-    const meses = [
-      { label:'M0', val:c.m0, cls:'b0' },
-      { label:'M1', val:c.m1, cls:'b1' },
-      { label:'M2', val:c.m2, cls:'b2' },
-      { label:'M3', val:c.m3, cls:'b3' },
-    ];
-    const maxTpv = Math.max(...meses.map(m=>m.val), 1);
+    const meses = [{label:'M0',val:c.m0,cls:'b0'},{label:'M1',val:c.m1,cls:'b1'},{label:'M2',val:c.m2,cls:'b2'},{label:'M3',val:c.m3,cls:'b3'}];
+    const maxV = Math.max(...meses.map(m=>m.val), 1);
     document.getElementById('m-bars').innerHTML = meses.map(m => {
-      const h = Math.round((m.val / maxTpv) * 72);
+      const h = Math.round((m.val/maxV)*68);
       const fmt = m.val ? 'R$ '+m.val.toLocaleString('pt-BR',{maximumFractionDigits:0}) : '—';
-      return `<div class="tpv-bar-col">
-        <div class="tpv-bar-wrap"><div class="tpv-bar ${m.cls}" style="height:${h}px"></div></div>
-        <div class="tpv-bar-label">${m.label}</div>
-        <div class="tpv-bar-val">${fmt}</div>
-      </div>`;
+      return `<div class="tpv-bar-col"><div class="tpv-bar-wrap"><div class="tpv-bar ${m.cls}" style="height:${h}px"></div></div><div class="tpv-bar-label">${m.label}</div><div class="tpv-bar-val">${fmt}</div></div>`;
     }).join('');
 
-    // Botão credenciar
     const wrap = document.getElementById('m-credenciar-wrap');
+    const cJson = JSON.stringify(c).replace(/'/g,"&#39;");
     if (credenciados[c.doc]) {
-      wrap.innerHTML = `<div style="text-align:center;padding:12px;background:#f0fdf7;border-radius:10px;color:#166534;font-size:.88rem;font-weight:600;">✅ Credenciado na Stone em ${credenciados[c.doc]}</div>`;
+      wrap.innerHTML = `<div style="text-align:center;padding:12px;background:#f0fdf7;border-radius:10px;color:#166534;font-size:.85rem;font-weight:600;">✅ Credenciado em ${credenciados[c.doc]}</div>`;
     } else if (!c.jaStone) {
-      const cJson = JSON.stringify(c).replace(/'/g,"&#39;");
-      wrap.innerHTML = `<button onclick='credenciarStone(${cJson})' style="width:100%;background:var(--green);color:white;border:none;border-radius:10px;padding:14px;cursor:pointer;font-size:.95rem;font-weight:700;transition:background .2s;" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">✅ Marcar como credenciado na Stone</button>`;
+      wrap.innerHTML = `<button onclick='credenciarStone(${cJson})' style="width:100%;background:var(--green);color:white;border:none;border-radius:10px;padding:14px;cursor:pointer;font-size:.95rem;font-weight:700;" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">🟢 Marcar como credenciado na Stone</button>`;
     } else {
       wrap.innerHTML = '';
     }
 
-    document.getElementById('overlay').classList.add('open');
+    document.getElementById('overlay-cliente').classList.add('open');
   }
 
   function fecharModal(e) {
-    if (!e || e.target === document.getElementById('overlay')) {
-      document.getElementById('overlay').classList.remove('open');
-    }
+    if (e && e.target !== document.getElementById('overlay-cliente')) return;
+    fecharModalCliente();
+  }
+  function fecharModalCliente() {
+    document.getElementById('overlay-cliente').classList.remove('open');
   }
 
-  document.addEventListener('keydown', e => { if (e.key==='Escape') fecharModal({target:document.getElementById('overlay')}); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { fecharModalCliente(); fecharAdminForce(); }
+  });
 
-  /* ── WhatsApp ── */
+  /* ════════════════════════════════════
+     AÇÕES
+  ════════════════════════════════════ */
   function abrirWhatsApp(c) {
     const msg = document.getElementById('msg-template').value.replace(/{nome}/g, c.nome);
     window.open(`https://wa.me/55${c.tel}?text=${encodeURIComponent(msg)}`, '_blank');
     pendentes[c.doc] = true;
     const cJson = JSON.stringify(c).replace(/'/g,"&#39;");
     const row = document.getElementById('row-'+c.doc);
-    if (row) row.cells[6].innerHTML = `<button class="btn-confirmar" onclick='marcarEnviado(${cJson})'>✅ Marcar enviado</button>`;
+    if (row) {
+      const acoes = row.cells[7].querySelector('.acoes');
+      if (acoes) acoes.children[0].outerHTML = `<button class="btn-confirmar" onclick='marcarEnviado(${cJson})'>✅ Confirmar envio</button>`;
+    }
   }
 
   function marcarEnviado(c) {
@@ -602,20 +761,21 @@
     localStorage.setItem('ton_envios', JSON.stringify(envios));
     const row = document.getElementById('row-'+c.doc);
     if (row) {
-      row.cells[5].innerHTML = `<span style="font-size:.78rem;color:var(--green);font-weight:600">✅ ${fmt}</span>`;
-      row.cells[6].innerHTML = `<button class="btn-wpp" disabled>✅ Enviado</button>`;
+      row.cells[6].innerHTML = `<span style="font-size:.75rem;color:var(--green);font-weight:600">✅ ${fmt}</span>`;
+      const acoes = row.cells[7].querySelector('.acoes');
+      if (acoes) acoes.children[0].outerHTML = `<button class="btn-wpp" disabled>✅ Enviado</button>`;
     }
   }
 
   function credenciarStone(c) {
+    if (!confirm(`Marcar "${c.nome}" como credenciado na Stone?`)) return;
     const agora = new Date();
-    const fmt = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const fmt = agora.toLocaleDateString('pt-BR')+' '+agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     credenciados[c.doc] = fmt;
     localStorage.setItem('ton_credenciados', JSON.stringify(credenciados));
-    // Atualiza o cliente na lista
-    const cl = todosClientes.find(x => x.doc === c.doc);
+    const cl = todosClientes.find(x => x.doc===c.doc);
     if (cl) cl.jaStone = true;
-    fecharModal({target: document.getElementById('overlay')});
+    fecharModalCliente();
     filtrar();
   }
 
@@ -626,10 +786,9 @@
     filtrar();
   }
 
-  try { envios       = JSON.parse(localStorage.getItem('ton_envios'))       || {}; } catch(e) { envios={}; }
-  try { credenciados = JSON.parse(localStorage.getItem('ton_credenciados')) || {}; } catch(e) { credenciados={}; }
+  if (typeof XLSX==='undefined') alert('⚠️ Biblioteca XLSX não carregou. Abra via http://localhost:8084');
 
-  if (typeof XLSX==='undefined') mostrarErro('Biblioteca XLSX não carregou. Abra via http://localhost:8084');
+  init();
 </script>
 </body>
 </html>
