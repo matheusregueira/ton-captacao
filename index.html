@@ -416,14 +416,26 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
       });
       const res = await r.json();
       if (!res.ok) {
-        alert('⚠️ Erro ao sincronizar: ' + (res.erro || 'erro desconhecido'));
+        mostrarErroSync(res.erro || 'erro desconhecido');
         return false;
       }
       return true;
     } catch(e) {
-      alert('⚠️ Erro: ' + e.message + '\n\nVerifique se o servidor local está rodando (Ton Captacao.bat).');
+      mostrarErroSync('Fetch falhou: ' + e.message);
       return false;
     }
+  }
+
+  function mostrarErroSync(msg) {
+    let div = document.getElementById('sync-erro');
+    if (!div) {
+      div = document.createElement('div');
+      div.id = 'sync-erro';
+      div.style.cssText = 'background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:12px 16px;margin:16px 0;font-size:.82rem;color:#991b1b;word-break:break-all;';
+      document.querySelector('.container').prepend(div);
+    }
+    div.textContent = '⚠️ Erro sync: ' + msg;
+    div.style.display = 'block';
   }
 
   async function sincronizarAgora() {
