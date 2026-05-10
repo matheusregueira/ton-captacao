@@ -426,7 +426,6 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
   }
 
   async function sincronizarAgora() {
-    if (!githubToken) { alert('Configure o token GitHub no Admin primeiro.'); return; }
     if (!todosClientes.length) { alert('Nenhuma base carregada para sincronizar.'); return; }
     const btn = document.getElementById('btn-sync');
     btn.textContent = '⏳ Sincronizando...';

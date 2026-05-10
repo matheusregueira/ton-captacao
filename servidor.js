@@ -2,6 +2,8 @@ const http = require('http');
 const fs   = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const GIT = '"C:\\Program Files\\Git\\cmd\\git.exe"';
+const CWD = __dirname;
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -22,8 +24,10 @@ http.createServer((req, res) => {
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
       try {
-        fs.writeFileSync('base.json', body, 'utf8');
-        execSync('git add base.json && git commit -m "Atualiza base Ton via dashboard" && git push', { stdio: 'pipe' });
+        fs.writeFileSync(path.join(CWD, 'base.json'), body, 'utf8');
+        execSync(`${GIT} add base.json`, { cwd: CWD, stdio: 'pipe' });
+        try { execSync(`${GIT} commit -m "Atualiza base Ton via dashboard"`, { cwd: CWD, stdio: 'pipe' }); } catch(e) { /* nada a commitar */ }
+        execSync(`${GIT} push`, { cwd: CWD, stdio: 'pipe' });
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true }));
       } catch(e) {
