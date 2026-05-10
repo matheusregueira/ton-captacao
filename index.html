@@ -131,6 +131,40 @@
     .pass-row button { background:var(--green); color:white; border:none; border-radius:8px; padding:10px 20px; cursor:pointer; font-weight:700; font-size:.9rem; transition:background .2s; }
     .pass-row button:hover { background:var(--green-dark); }
     .pass-erro { font-size:.8rem; color:#ef4444; display:none; margin-top:4px; }
+
+    /* ── Mobile ── */
+    @media (max-width:640px) {
+      header { padding:14px 16px; gap:10px; }
+      header h1 { font-size:1rem; }
+      header p  { display:none; }
+
+      .container { padding:16px 12px; }
+
+      .stats { grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
+      .stat-card { padding:14px 16px; }
+      .stat-card .val { font-size:1.4rem; }
+
+      .msg-box { padding:14px 16px; }
+
+      .toolbar { gap:8px; }
+      .toolbar input[type=text] { min-width:100%; }
+      .tpv-filter { width:100%; }
+      .tpv-filter input[type=number] { flex:1; width:auto; }
+      .toolbar select { max-width:100%; width:calc(50% - 4px); }
+
+      .table-wrap { border-radius:8px; overflow-x:auto; }
+      table { min-width:480px; }
+      thead th { padding:10px 10px; }
+      tbody td { padding:8px 10px; }
+
+      /* Esconde colunas menos críticas no mobile */
+      th:nth-child(3), td:nth-child(3),
+      th:nth-child(4), td:nth-child(4),
+      th:nth-child(7), td:nth-child(7) { display:none; }
+
+      .modal { padding:20px 16px; border-radius:12px; }
+      .admin-modal { width:100%; }
+    }
   </style>
 </head>
 <body>
