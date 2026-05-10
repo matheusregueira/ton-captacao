@@ -13,24 +13,34 @@ const MIME = {
 };
 
 http.createServer((req, res) => {
+  console.log('[req]', req.method, req.url);
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
-  if (req.method === 'POST' && req.url === '/salvar-base') {
+  if (req.method === 'POST' && req.url.startsWith('/salvar-base')) {
     let body = '';
-    req.on('data', chunk => body += chunk);
+    req.on('data', chunk => { body += chunk; });
     req.on('end', () => {
+      console.log('[salvar-base] body recebido, tamanho:', body.length);
       try {
-        fs.writeFileSync(path.join(CWD, 'base.json'), body, 'utf8');
+        const arquivo = path.join(CWD, 'base.json');
+        fs.writeFileSync(arquivo, body, 'utf8');
+        console.log('[salvar-base] base.json salvo em', arquivo);
         execSync(`${GIT} add base.json`, { cwd: CWD, stdio: 'pipe' });
-        try { execSync(`${GIT} commit -m "Atualiza base Ton via dashboard"`, { cwd: CWD, stdio: 'pipe' }); } catch(e) { /* nada a commitar */ }
+        try {
+          execSync(`${GIT} commit -m "Atualiza base Ton via dashboard"`, { cwd: CWD, stdio: 'pipe' });
+          console.log('[salvar-base] commit ok');
+        } catch(e) { console.log('[salvar-base] nada novo pra commitar'); }
         execSync(`${GIT} push`, { cwd: CWD, stdio: 'pipe' });
+        console.log('[salvar-base] push ok');
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true }));
       } catch(e) {
+        console.error('[salvar-base] ERRO:', e.message);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: false, erro: e.message }));
       }
@@ -47,4 +57,7 @@ http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': type });
     fs.createReadStream(file).pipe(res);
   });
-}).listen(8084, () => console.log('Ton Captação rodando em: http://localhost:8084'));
+}).listen(8084, () => {
+  console.log('=== Ton Captacao v2 rodando em http://localhost:8084 ===');
+  console.log('CWD:', CWD);
+});
