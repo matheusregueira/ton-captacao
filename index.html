@@ -236,13 +236,15 @@
       <div class="modal-row"><span class="label">Cidade / UF</span><span class="valor" id="m-cidade"></span></div>
       <div class="modal-row"><span class="label">CEP</span><span class="valor" id="m-cep"></span></div>
     </div>
+
+    <div id="m-credenciar-wrap" style="margin-top:4px"></div>
   </div>
 </div>
 
 <script>
   let dadosStone = null, dadosTon = null, dadosCSV = null;
   let todosClientes = [];
-  let envios = {}, pendentes = {};
+  let envios = {}, pendentes = {}, credenciados = {};
   let ordemCol = 'tpv', ordemAsc = false;
 
   function mostrarErro(msg) {
@@ -401,7 +403,7 @@
         comp: cad.comp || '', bairro: cad.bairro || '',
         cep: cad.cep || '', estado: cad.estado || '',
         cidadeCSV: cad.cidadeCSV || cidade,
-        jaStone: docsStone.has(doc),
+        jaStone: docsStone.has(doc) || !!credenciados[doc],
       });
     }
 
@@ -484,9 +486,11 @@
 
       const tpvFmt = 'R$ ' + c.tpv.toLocaleString('pt-BR',{maximumFractionDigits:0});
       const tpvCls = c.tpv>=7000?'tpv-high':c.tpv>=3000?'tpv-mid':'tpv-low';
-      const badge  = c.jaStone
-        ? `<span class="badge-stone">✅ Já é Stone</span>`
-        : `<span class="badge-alvo">🎯 Alvo</span>`;
+      const badge = credenciados[c.doc]
+        ? `<span class="badge-stone">✅ Credenciado</span>`
+        : c.jaStone
+          ? `<span class="badge-stone">✅ Já é Stone</span>`
+          : `<span class="badge-alvo">🎯 Alvo</span>`;
 
       const enviadoEm  = envios[c.doc]||'';
       const enviadoFmt = enviadoEm
@@ -558,6 +562,17 @@
       </div>`;
     }).join('');
 
+    // Botão credenciar
+    const wrap = document.getElementById('m-credenciar-wrap');
+    if (credenciados[c.doc]) {
+      wrap.innerHTML = `<div style="text-align:center;padding:12px;background:#f0fdf7;border-radius:10px;color:#166534;font-size:.88rem;font-weight:600;">✅ Credenciado na Stone em ${credenciados[c.doc]}</div>`;
+    } else if (!c.jaStone) {
+      const cJson = JSON.stringify(c).replace(/'/g,"&#39;");
+      wrap.innerHTML = `<button onclick='credenciarStone(${cJson})' style="width:100%;background:var(--green);color:white;border:none;border-radius:10px;padding:14px;cursor:pointer;font-size:.95rem;font-weight:700;transition:background .2s;" onmouseover="this.style.background='var(--green-dark)'" onmouseout="this.style.background='var(--green)'">✅ Marcar como credenciado na Stone</button>`;
+    } else {
+      wrap.innerHTML = '';
+    }
+
     document.getElementById('overlay').classList.add('open');
   }
 
@@ -592,6 +607,18 @@
     }
   }
 
+  function credenciarStone(c) {
+    const agora = new Date();
+    const fmt = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    credenciados[c.doc] = fmt;
+    localStorage.setItem('ton_credenciados', JSON.stringify(credenciados));
+    // Atualiza o cliente na lista
+    const cl = todosClientes.find(x => x.doc === c.doc);
+    if (cl) cl.jaStone = true;
+    fecharModal({target: document.getElementById('overlay')});
+    filtrar();
+  }
+
   function limparEnvios() {
     if (!confirm('Apagar todo o histórico de envios?')) return;
     envios={}; pendentes={};
@@ -599,7 +626,8 @@
     filtrar();
   }
 
-  try { envios = JSON.parse(localStorage.getItem('ton_envios'))||{}; } catch(e) { envios={}; }
+  try { envios       = JSON.parse(localStorage.getItem('ton_envios'))       || {}; } catch(e) { envios={}; }
+  try { credenciados = JSON.parse(localStorage.getItem('ton_credenciados')) || {}; } catch(e) { credenciados={}; }
 
   if (typeof XLSX==='undefined') mostrarErro('Biblioteca XLSX não carregou. Abra via http://localhost:8084');
 </script>
