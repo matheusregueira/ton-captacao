@@ -310,6 +310,16 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
       <div class="admin-steps">
 
         <div class="admin-step">
+          <h4>🔑 Token GitHub (configurar uma vez)</h4>
+          <p>Permite sincronizar a base para todo o time. Gere em: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → escopo <strong>repo</strong></p>
+          <div class="pass-row">
+            <input type="password" id="github-token-input" placeholder="ghp_..." style="font-family:monospace;font-size:.82rem;">
+            <button onclick="salvarGithubToken()">Salvar</button>
+          </div>
+          <div id="github-token-status" style="font-size:.75rem;margin-top:6px;"></div>
+        </div>
+
+        <div class="admin-step">
           <h4>🟢 Passo 1 — Carteira Stone</h4>
           <p>Base Stone — identifica quem já é cliente</p>
           <label class="upload-btn" id="abtn1">
@@ -351,6 +361,10 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
   // ── Senha admin (altere aqui se quiser mudar) ──
   const SENHA_ADMIN = 'Cnc321timbu!';
 
+  const REPO_RAW = 'https://raw.githubusercontent.com/matheusregueira/ton-captacao/main/base.json';
+  const REPO_API = 'https://api.github.com/repos/matheusregueira/ton-captacao/contents/base.json';
+
+  let githubToken = localStorage.getItem('ton_github_token') || '';
   let todosClientes = [];
   let envios = {}, pendentes = {}, credenciados = {};
   let ordemCol = 'tpv', ordemAsc = false;
@@ -361,10 +375,23 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
   /* ════════════════════════════════════
      INICIALIZAÇÃO — carrega do localStorage
   ════════════════════════════════════ */
-  function init() {
+  async function init() {
     try { envios       = JSON.parse(localStorage.getItem('ton_envios'))       || {}; } catch(e) { envios={}; }
     try { credenciados = JSON.parse(localStorage.getItem('ton_credenciados')) || {}; } catch(e) { credenciados={}; }
 
+    // Tenta carregar do GitHub primeiro
+    const remoto = await carregarGitHub();
+    if (remoto && remoto.clientes && remoto.clientes.length) {
+      todosClientes = remoto.clientes;
+      localStorage.setItem('ton_base', JSON.stringify(remoto));
+      document.getElementById('notice-data').textContent = 'Salvo em ' + new Date(remoto.savedAt).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+      document.getElementById('notice-count').textContent = remoto.clientes.length + ' clientes Ton';
+      document.getElementById('base-notice').style.display = 'flex';
+      mostrarDashboard();
+      return;
+    }
+
+    // Fallback: localStorage
     const salvo = localStorage.getItem('ton_base');
     if (salvo) {
       try {
@@ -380,6 +407,45 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
     } else {
       document.getElementById('sem-dados').style.display = 'block';
     }
+  }
+
+  async function carregarGitHub() {
+    try {
+      const r = await fetch(REPO_RAW, { cache: 'no-store' });
+      if (!r.ok) return null;
+      return await r.json();
+    } catch(e) { return null; }
+  }
+
+  async function salvarGitHub(dados) {
+    if (!githubToken) return false;
+    try {
+      const content = JSON.stringify(dados);
+      const base64  = btoa(unescape(encodeURIComponent(content)));
+      let sha = '';
+      try {
+        const r = await fetch(REPO_API, { headers: { Authorization: 'token ' + githubToken, Accept: 'application/vnd.github.v3+json' } });
+        if (r.ok) sha = (await r.json()).sha;
+      } catch(e) {}
+      const body = { message: 'Atualiza base Ton via dashboard', content: base64 };
+      if (sha) body.sha = sha;
+      const r = await fetch(REPO_API, {
+        method: 'PUT',
+        headers: { Authorization: 'token ' + githubToken, 'Content-Type': 'application/json', Accept: 'application/vnd.github.v3+json' },
+        body: JSON.stringify(body)
+      });
+      return r.ok;
+    } catch(e) { console.error('GitHub save error:', e); return false; }
+  }
+
+  function salvarGithubToken() {
+    const val = document.getElementById('github-token-input').value.trim();
+    if (!val) return;
+    githubToken = val;
+    localStorage.setItem('ton_github_token', val);
+    const st = document.getElementById('github-token-status');
+    st.textContent = '✅ Token salvo!';
+    st.style.color = 'var(--green)';
   }
 
   function mostrarDashboard() {
@@ -520,13 +586,13 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
     if (!_stone || !_ton || !_csv) return;
 
     document.getElementById('admin-salvando').style.display = 'block';
-    setTimeout(() => {
-      try { _cruzar(); } catch(e) { mostrarErro('Erro no cruzamento: ' + e.message); }
+    setTimeout(async () => {
+      try { await _cruzar(); } catch(e) { mostrarErro('Erro no cruzamento: ' + e.message); }
       document.getElementById('admin-salvando').style.display = 'none';
     }, 50);
   }
 
-  function _cruzar() {
+  async function _cruzar() {
     // Documentos Stone
     const hS = _stone[0].map(c => String(c||''));
     const iDocS = hS.findIndex(c => /documento|cnpj|cpf/i.test(c));
@@ -599,9 +665,11 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
     clientes.sort((a,b) => b.tpv - a.tpv);
     todosClientes = clientes;
 
-    // Salva no localStorage
-    localStorage.setItem('ton_base', JSON.stringify({ clientes, savedAt: new Date().toISOString() }));
-    document.getElementById('notice-data').textContent = 'Salvo agora';
+    // Salva localmente e no GitHub
+    const dados = { clientes, savedAt: new Date().toISOString() };
+    localStorage.setItem('ton_base', JSON.stringify(dados));
+    const okGH = await salvarGitHub(dados);
+    document.getElementById('notice-data').textContent = okGH ? 'Sincronizado agora ☁️' : 'Salvo localmente';
     document.getElementById('notice-count').textContent = clientes.length + ' clientes Ton';
     document.getElementById('base-notice').style.display = 'flex';
 
