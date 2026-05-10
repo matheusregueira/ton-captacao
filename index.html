@@ -191,7 +191,7 @@
   <!-- Aviso base salva -->
   <div class="base-notice" id="base-notice" style="display:none">
     <span>📦 Base carregada · <strong id="notice-data"></strong> · <span id="notice-count"></span></span>
-    <span style="font-size:.75rem;color:#9ca3af">Clique em Admin para atualizar</span>
+    <span style="display:flex;align-items:center;gap:8px;"><span style="font-size:.75rem;color:#9ca3af">Clique em Admin para atualizar</span><button id="btn-sync" onclick="sincronizarAgora()" style="background:var(--green);color:white;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.75rem;font-weight:600;">☁️ Sincronizar</button></span>
   </div>
 
   <!-- Stats -->
@@ -434,8 +434,29 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
         headers: { Authorization: 'token ' + githubToken, 'Content-Type': 'application/json', Accept: 'application/vnd.github.v3+json' },
         body: JSON.stringify(body)
       });
-      return r.ok;
-    } catch(e) { console.error('GitHub save error:', e); return false; }
+      if (!r.ok) {
+        const err = await r.json().catch(() => ({}));
+        alert('⚠️ Erro ao salvar no GitHub (status ' + r.status + '): ' + (err.message || 'verifique o token'));
+        return false;
+      }
+      return true;
+    } catch(e) {
+      alert('⚠️ Erro de conexão ao salvar no GitHub: ' + e.message);
+      return false;
+    }
+  }
+
+  async function sincronizarAgora() {
+    if (!githubToken) { alert('Configure o token GitHub no Admin primeiro.'); return; }
+    if (!todosClientes.length) { alert('Nenhuma base carregada para sincronizar.'); return; }
+    const btn = document.getElementById('btn-sync');
+    btn.textContent = '⏳ Sincronizando...';
+    btn.disabled = true;
+    const dados = JSON.parse(localStorage.getItem('ton_base') || '{}');
+    const ok = await salvarGitHub(dados);
+    btn.textContent = ok ? '☁️ Sincronizado!' : '⚠️ Falhou';
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = '☁️ Sincronizar'; }, 3000);
   }
 
   function salvarGithubToken() {
