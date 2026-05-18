@@ -702,16 +702,20 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
     document.getElementById('notice-count').textContent = clientes.length + ' clientes Ton';
     document.getElementById('base-notice').style.display = 'flex';
 
-    // Sincroniza com GitHub em background
+    // Sincroniza com GitHub — mantém modal aberto até terminar
     document.getElementById('admin-sync-status').style.display = 'none';
     document.getElementById('admin-salvando').style.display = 'block';
+    mostrarDashboard();
+
     salvarGitHub(dadosSalvos).then(ok => {
       document.getElementById('admin-salvando').style.display = 'none';
-      if (ok) mostrarSyncOk();
+      if (ok) {
+        mostrarSyncOk();
+        setTimeout(() => fecharAdminForce(), 1500);
+      } else {
+        // Mantém modal aberto para o usuário ver o erro
+      }
     });
-
-    fecharAdminForce();
-    mostrarDashboard();
   }
 
   function extrairTelefone(str) {
