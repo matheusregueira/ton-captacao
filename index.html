@@ -337,12 +337,21 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
             <input type="file" id="afile-csv" accept=".csv,.xlsx,.xls" multiple onchange="aCarregarCSVs(this)">
           </label>
           <div class="step-ok" id="aok3"></div>
+        <div class="admin-step">
+          <h4>🔑 Token GitHub (sync automático)</h4>
+          <p>Token pessoal do GitHub para salvar a base após o upload. Gere em github.com → Settings → Developer settings → Personal access tokens (Classic) com permissão <strong>repo</strong>.</p>
+          <div class="pass-row">
+            <input type="password" id="github-token-input" placeholder="ghp_...">
+            <button onclick="salvarGithubToken()">Salvar</button>
+          </div>
+          <div class="step-ok" id="token-ok"></div>
         </div>
 
       </div>
-      <div id="admin-salvando" style="display:none;text-align:center;padding:16px;color:var(--green);font-weight:600;font-size:.9rem;">
-        ⏳ Processando e salvando base...
+      <div id="admin-salvando" style="display:none;text-align:center;padding:12px 16px;color:var(--green);font-weight:600;font-size:.9rem;">
+        ⏳ Sincronizando com o GitHub...
       </div>
+      <div id="admin-sync-status" style="display:none;text-align:center;padding:8px 16px;font-size:.85rem;font-weight:600;border-radius:8px;margin-top:8px;"></div>
     </div>
   </div>
 </div>
@@ -369,31 +378,26 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
     try { envios       = JSON.parse(localStorage.getItem('ton_envios'))       || {}; } catch(e) { envios={}; }
     try { credenciados = JSON.parse(localStorage.getItem('ton_credenciados')) || {}; } catch(e) { credenciados={}; }
 
-    // Tenta carregar do GitHub primeiro
+    let salvo = null;
+    try { salvo = JSON.parse(localStorage.getItem('ton_base')); } catch(e) {}
+
     const remoto = await carregarGitHub();
-    if (remoto && remoto.clientes && remoto.clientes.length) {
-      todosClientes = remoto.clientes;
-      localStorage.setItem('ton_base', JSON.stringify(remoto));
-      document.getElementById('notice-data').textContent = 'Salvo em ' + new Date(remoto.savedAt).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
-      document.getElementById('notice-count').textContent = remoto.clientes.length + ' clientes Ton';
-      document.getElementById('base-notice').style.display = 'flex';
-      mostrarDashboard();
-      return;
+
+    // Usa o mais recente entre GitHub e localStorage
+    let dados = null;
+    if (remoto && salvo) {
+      dados = new Date(remoto.savedAt || 0) >= new Date(salvo.savedAt || 0) ? remoto : salvo;
+    } else {
+      dados = remoto || salvo;
     }
 
-    // Fallback: localStorage
-    const salvo = localStorage.getItem('ton_base');
-    if (salvo) {
-      try {
-        const { clientes, savedAt } = JSON.parse(salvo);
-        todosClientes = clientes;
-        document.getElementById('notice-data').textContent = 'Salvo em ' + new Date(savedAt).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
-        document.getElementById('notice-count').textContent = clientes.length + ' clientes Ton';
-        document.getElementById('base-notice').style.display = 'flex';
-        mostrarDashboard();
-      } catch(e) {
-        document.getElementById('sem-dados').style.display = 'block';
-      }
+    if (dados && dados.clientes && dados.clientes.length) {
+      todosClientes = dados.clientes;
+      localStorage.setItem('ton_base', JSON.stringify(dados));
+      document.getElementById('notice-data').textContent = 'Salvo em ' + new Date(dados.savedAt).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+      document.getElementById('notice-count').textContent = dados.clientes.length + ' clientes Ton';
+      document.getElementById('base-notice').style.display = 'flex';
+      mostrarDashboard();
     } else {
       document.getElementById('sem-dados').style.display = 'block';
     }
@@ -408,15 +412,23 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
   }
 
   async function salvarGitHub(dados) {
+    const token = localStorage.getItem('ton_github_token') || '';
+    if (!token) { mostrarErroSync('Token do GitHub não configurado. Configure no painel Admin.'); return false; }
     try {
-      const r = await fetch('http://localhost:8085/salvar-base', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados)
+      const getR = await fetch(REPO_API, {
+        headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json' }
       });
-      const res = await r.json();
-      if (!res.ok) {
-        mostrarErroSync(res.erro || 'erro desconhecido');
+      const getJson = await getR.json();
+      const sha = getJson.sha;
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(dados, null, 2))));
+      const putR = await fetch(REPO_API, {
+        method: 'PUT',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+        body: JSON.stringify({ message: 'Atualiza base Ton via dashboard', content, sha })
+      });
+      if (!putR.ok) {
+        const err = await putR.json();
+        mostrarErroSync(err.message || 'Erro na API do GitHub');
         return false;
       }
       return true;
@@ -427,15 +439,13 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
   }
 
   function mostrarErroSync(msg) {
-    let div = document.getElementById('sync-erro');
-    if (!div) {
-      div = document.createElement('div');
-      div.id = 'sync-erro';
-      div.style.cssText = 'background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:12px 16px;margin:16px 0;font-size:.82rem;color:#991b1b;word-break:break-all;';
-      document.querySelector('.container').prepend(div);
-    }
-    div.textContent = '⚠️ Erro sync: ' + msg;
-    div.style.display = 'block';
+    const el = document.getElementById('admin-sync-status');
+    if (el) { el.textContent = '⚠️ Erro sync: ' + msg; el.style.color = '#ef4444'; el.style.display = 'block'; }
+  }
+
+  function mostrarSyncOk() {
+    const el = document.getElementById('admin-sync-status');
+    if (el) { el.textContent = '☁️ Base sincronizada com o GitHub!'; el.style.color = 'var(--green)'; el.style.display = 'block'; }
   }
 
   async function sincronizarAgora() {
@@ -500,6 +510,14 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
     document.getElementById('admin-steps').style.display = 'none';
     document.getElementById('pass-erro').style.display   = 'none';
     document.getElementById('admin-pass').value = '';
+    document.getElementById('admin-sync-status').style.display = 'none';
+    const tokenSalvo = localStorage.getItem('ton_github_token') || '';
+    if (tokenSalvo) {
+      document.getElementById('token-ok').textContent = '✅ Token já configurado';
+      document.getElementById('token-ok').classList.add('show');
+    } else {
+      document.getElementById('token-ok').classList.remove('show');
+    }
     setTimeout(() => document.getElementById('admin-pass').focus(), 100);
   }
 
@@ -677,13 +695,20 @@ Migrar é simples e eu te ajudo aqui em Barbacena — posso te chamar agora?</te
     clientes.sort((a,b) => b.tpv - a.tpv);
     todosClientes = clientes;
 
-    // Salva localmente e no GitHub
-    const dados = { clientes, savedAt: new Date().toISOString() };
-    localStorage.setItem('ton_base', JSON.stringify(dados));
-    const okGH = await salvarGitHub(dados);
-    document.getElementById('notice-data').textContent = okGH ? 'Sincronizado agora ☁️' : 'Salvo localmente';
+    const savedAt = new Date().toISOString();
+    const dadosSalvos = { clientes, savedAt };
+    localStorage.setItem('ton_base', JSON.stringify(dadosSalvos));
+    document.getElementById('notice-data').textContent = 'Salvo agora';
     document.getElementById('notice-count').textContent = clientes.length + ' clientes Ton';
     document.getElementById('base-notice').style.display = 'flex';
+
+    // Sincroniza com GitHub em background
+    document.getElementById('admin-sync-status').style.display = 'none';
+    document.getElementById('admin-salvando').style.display = 'block';
+    salvarGitHub(dadosSalvos).then(ok => {
+      document.getElementById('admin-salvando').style.display = 'none';
+      if (ok) mostrarSyncOk();
+    });
 
     fecharAdminForce();
     mostrarDashboard();
